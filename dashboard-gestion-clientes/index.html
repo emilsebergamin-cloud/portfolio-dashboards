@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio · Content Dashboard — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  :root {
+    --rosa-viejo: #c4a0a0;
+    --rosa-claro: #dfc5c5;
+    --rosa-hover: #b8908f;
+    --verde-seco: #a3aa8e;
+    --verde-claro: #c5cbaf;
+    --verde-hover: #8f966e;
+    --beige-1: #f5efe6;
+    --beige-2: #ede4d8;
+    --beige-3: #e2d5c5;
+    --crema: #faf7f2;
+    --texto: #5a4a42;
+    --texto-suave: #8a7a72;
+    --blanco: #fffcf8;
+    --sombra: rgba(90, 74, 66, 0.06);
+    --sombra-hover: rgba(90, 74, 66, 0.12);
+    --rojo-suave: #c89090;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--crema);
+    color: var(--texto);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+  .menu-toggle {
+    display: none;
+    position: fixed; top: 1rem; left: 1rem; z-index: 100;
+    background: var(--blanco); border: 1px solid var(--beige-2);
+    border-radius: 12px; width: 44px; height: 44px;
+    align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 12px var(--sombra);
+  }
+  .menu-toggle svg { width: 20px; height: 20px; stroke: var(--texto); }
+
+  .sidebar {
+    background: var(--blanco); border-right: 1px solid var(--beige-2);
+    padding: 2.5rem 1.5rem;
+    display: flex; flex-direction: column; gap: 2rem;
+    position: sticky; top: 0; height: 100vh;
+    animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow-y: auto;
+  }
+
+  @keyframes slideInLeft {
+    from { transform: translateX(-30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 300;
+    letter-spacing: 0.02em; color: var(--texto);
+    padding-bottom: 1.5rem; border-bottom: 1px solid var(--beige-2);
+  }
+  .logo span {
+    display: block; font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem; font-weight: 400;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--texto-suave); margin-top: 0.3rem;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 0.3rem; }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; border-radius: 12px;
+    cursor: pointer; font-size: 0.88rem; font-weight: 400;
+    color: var(--texto-suave);
+    transition: all 0.3s ease;
+    position: relative; overflow: hidden;
+  }
+  .nav-item::before {
+    content: ''; position: absolute; left: 0; top: 0;
+    width: 3px; height: 100%;
+    background: var(--rosa-viejo);
+    border-radius: 0 4px 4px 0;
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  }
+  .nav-item:hover { background: var(--beige-1); color: var(--texto); }
+  .nav-item.active { background: var(--beige-1); color: var(--texto); font-weight: 500; }
+  .nav-item.active::before { transform: scaleY(1); }
+  .nav-icon {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+
+  .sidebar-footer { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--beige-2); }
+
+  .sync-status {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    background: var(--beige-1);
+    border-radius: 10px;
+    font-size: 0.72rem;
+    color: var(--texto-suave);
+    margin-bottom: 1rem;
+  }
+  .sync-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--verde-seco);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .sync-dot.offline { background: var(--rosa-viejo); animation: none; }
+  .sync-dot.syncing { background: var(--beige-3); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .mini-calendar { background: var(--beige-1); border-radius: 14px; padding: 1.2rem; }
+  .mini-calendar h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 500;
+    margin-bottom: 0.75rem; color: var(--texto);
+  }
+  .cal-dots { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .cal-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; color: var(--texto-suave);
+    transition: all 0.2s ease; cursor: pointer;
+  }
+  .cal-dot:hover { background: var(--rosa-claro); color: var(--texto); }
+  .cal-dot.today { background: var(--rosa-viejo); color: var(--blanco); font-weight: 600; }
+
+  .main {
+    padding: 2.5rem 3rem;
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+  }
+
+  @keyframes fadeInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .daily-quote {
+    background: var(--blanco);
+    border-left: 3px solid var(--rosa-viejo);
+    border-radius: 0 14px 14px 0;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--texto);
+    line-height: 1.5;
+    box-shadow: 0 2px 12px var(--sombra);
+    animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+    position: relative;
+  }
+
+  .daily-quote::before {
+    content: '"';
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    font-size: 3rem;
+    color: var(--rosa-claro);
+    font-family: 'Cormorant Garamond', serif;
+    line-height: 1;
+    opacity: 0.6;
+  }
+
+  .quote-tag {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+    margin-bottom: 0.4rem;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 2.5rem; gap: 1rem; flex-wrap: wrap;
+  }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 300; line-height: 1.2;
+  }
+  .header h1 em { font-style: italic; color: var(--rosa-viejo); }
+  .header-sub { font-size: 0.85rem; color: var(--texto-suave); margin-top: 0.4rem; font-weight: 300; }
+  .header-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.4rem; border-radius: 50px; border: none;
+    cursor: pointer; font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    transition: all 0.3s ease; white-space: nowrap;
+  }
+  .btn-primary { background: var(--rosa-viejo); color: var(--blanco); }
+  .btn-primary:hover { background: var(--rosa-hover); transform: translateY(-2px); box-shadow: 0 6px 20px var(--sombra-hover); }
+  .btn-soft { background: var(--beige-1); color: var(--texto); }
+  .btn-soft:hover { background: var(--beige-2); }
+  .btn-ghost { background: transparent; color: var(--texto-suave); padding: 0.4rem 0.8rem; font-size: 0.78rem; }
+  .btn-ghost:hover { color: var(--texto); }
+  .btn-pdf {
+    background: var(--verde-claro);
+    color: var(--verde-hover);
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+  .btn-pdf:hover { background: var(--verde-seco); color: var(--blanco); }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1rem; margin-bottom: 2.5rem;
+  }
+
+  .stat-card {
+    background: var(--blanco); border: 1px solid var(--beige-2);
+    border-radius: 18px; padding: 1.4rem 1.5rem;
+    position: relative; overflow: hidden;
+    transition: all 0.35s ease;
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.5s; }
+  .stat-card:nth-child(2) { animation-delay: 0.6s; }
+  .stat-card:nth-child(3) { animation-delay: 0.7s; }
+  .stat-card:nth-child(4) { animation-delay: 0.8s; }
+  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px var(--sombra); }
+  .stat-card::after {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 18px 18px 0 0;
+  }
+  .stat-card:nth-child(1)::after { background: var(--rosa-viejo); }
+  .stat-card:nth-child(2)::after { background: var(--verde-seco); }
+  .stat-card:nth-child(3)::after { background: var(--beige-3); }
+  .stat-card:nth-child(4)::after { background: var(--rosa-claro); }
+
+  .stat-label {
+    font-size: 0.72rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--texto-suave);
+    margin-bottom: 0.6rem;
+  }
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem; font-weight: 500; line-height: 1;
+  }
+  .stat-tag {
+    display: inline-block; margin-top: 0.6rem;
+    font-size: 0.7rem; padding: 0.2rem 0.6rem;
+    border-radius: 50px; background: var(--beige-1);
+    color: var(--texto-suave);
+  }
+
+  .section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 400;
+    display: flex; align-items: center; gap: 0.75rem;
+    flex: 1;
+    min-width: 200px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--beige-2); }
+  .section-title .add-btn {
+    background: var(--beige-1); border: none;
+    width: 32px; height: 32px; border-radius: 50%;
+    cursor: pointer; color: var(--texto-suave);
+    font-size: 1.2rem; transition: all 0.3s ease;
+  }
+  .section-title .add-btn:hover { background: var(--rosa-claro); color: var(--rosa-hover); transform: rotate(90deg); }
+
+  .section-actions { display: flex; gap: 0.5rem; }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem; margin-bottom: 2.5rem;
+  }
+
+  .content-card {
+    background: var(--blanco); border: 1px solid var(--beige-2);
+    border-radius: 18px; padding: 1.5rem;
+    transition: all 0.35s ease;
+    cursor: pointer; position: relative;
+    animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .content-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px var(--sombra);
+    border-color: var(--rosa-claro);
+  }
+  .content-card.empty {
+    border: 2px dashed var(--beige-3); background: transparent;
+    text-align: center; color: var(--texto-suave);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 180px;
+  }
+  .content-card.empty:hover {
+    border-color: var(--rosa-viejo); color: var(--rosa-viejo);
+    background: var(--blanco);
+  }
+  .content-card.empty .empty-icon { font-size: 1.8rem; margin-bottom: 0.5rem; opacity: 0.6; }
+
+  .card-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 1rem; gap: 0.5rem;
+  }
+  .card-type {
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 0.12em; padding: 0.3rem 0.8rem;
+    border-radius: 50px; font-weight: 500;
+  }
+  .type-carrusel { background: var(--rosa-claro); color: var(--rosa-hover); }
+  .type-reel { background: var(--verde-claro); color: var(--verde-hover); }
+  .type-story { background: var(--beige-2); color: var(--texto-suave); }
+  .type-post { background: #d4cde0; color: #6b5b8a; }
+
+  .card-actions { display: flex; gap: 0.3rem; opacity: 0; transition: opacity 0.2s ease; }
+  .content-card:hover .card-actions { opacity: 1; }
+
+  .icon-btn {
+    background: transparent; border: none;
+    width: 26px; height: 26px; border-radius: 6px;
+    cursor: pointer; color: var(--texto-suave);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; font-size: 0.85rem;
+  }
+  .icon-btn:hover { background: var(--beige-1); color: var(--texto); }
+  .icon-btn.delete:hover { background: #f5dada; color: var(--rojo-suave); }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 500;
+    margin-bottom: 0.5rem; line-height: 1.3;
+    word-wrap: break-word;
+  }
+  .card-excerpt {
+    font-size: 0.82rem; color: var(--texto-suave);
+    line-height: 1.5; font-weight: 300;
+    word-wrap: break-word;
+  }
+  .card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.2rem; padding-top: 1rem;
+    border-top: 1px solid var(--beige-1);
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  .card-date { font-size: 0.72rem; color: var(--texto-suave); }
+  .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .tag {
+    font-size: 0.65rem; padding: 0.2rem 0.55rem;
+    border-radius: 50px; background: var(--beige-1);
+    color: var(--texto-suave);
+  }
+
+  .moodboard { margin-bottom: 2.5rem; }
+  .mood-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.8rem;
+  }
+  .mood-item {
+    border-radius: 14px; overflow: hidden;
+    position: relative; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    height: 180px; background: var(--beige-1);
+  }
+  .mood-item:hover { transform: scale(1.02); z-index: 2; }
+  .mood-item img { width: 100%; height: 100%; object-fit: cover; }
+  .mood-color {
+    width: 100%; height: 100%;
+    display: flex; align-items: flex-end; padding: 1rem;
+  }
+  .mood-label {
+    font-size: 0.7rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--blanco);
+    background: rgba(90, 74, 66, 0.4); backdrop-filter: blur(8px);
+    padding: 0.3rem 0.7rem; border-radius: 50px;
+  }
+  .mood-delete {
+    position: absolute; top: 0.5rem; right: 0.5rem;
+    background: rgba(255, 252, 248, 0.9); border: none;
+    width: 28px; height: 28px; border-radius: 50%;
+    cursor: pointer; color: var(--texto);
+    display: none; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+  }
+  .mood-item:hover .mood-delete { display: flex; }
+  .mood-add {
+    border: 2px dashed var(--beige-3);
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--texto-suave);
+    font-size: 1.8rem; transition: all 0.3s ease;
+    flex-direction: column; gap: 0.3rem;
+  }
+  .mood-add:hover { border-color: var(--rosa-viejo); color: var(--rosa-viejo); background: var(--blanco); }
+  .mood-add span { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .pipeline-col {
+    background: var(--blanco); border: 1px solid var(--beige-2);
+    border-radius: 18px; padding: 1.2rem;
+  }
+  .pipeline-header {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 1rem; padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--beige-1);
+  }
+  .pipeline-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .pipeline-header h3 {
+    font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.1em; font-weight: 500;
+    color: var(--texto-suave);
+  }
+  .pipeline-count {
+    margin-left: auto; font-size: 0.7rem;
+    background: var(--beige-1); padding: 0.15rem 0.5rem;
+    border-radius: 50px; color: var(--texto-suave);
+  }
+  .idea-card {
+    background: var(--beige-1); border-radius: 12px;
+    padding: 1rem; margin-bottom: 0.6rem;
+    transition: all 0.3s ease;
+    font-size: 0.84rem; line-height: 1.4;
+    position: relative; word-wrap: break-word;
+  }
+  .idea-card:hover { background: var(--beige-2); }
+  .idea-card .idea-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 0.6rem; font-size: 0.68rem;
+    color: var(--texto-suave); gap: 0.5rem;
+  }
+  .idea-actions { display: flex; gap: 0.3rem; opacity: 0; transition: opacity 0.2s ease; }
+  .idea-card:hover .idea-actions { opacity: 1; }
+  .idea-empty {
+    text-align: center; color: var(--texto-suave);
+    font-size: 0.78rem; padding: 1.5rem 1rem;
+    font-style: italic; opacity: 0.6;
+  }
+  .add-idea-btn {
+    width: 100%; background: transparent;
+    border: 1px dashed var(--beige-3);
+    border-radius: 12px; padding: 0.7rem;
+    cursor: pointer; color: var(--texto-suave);
+    font-size: 0.8rem; transition: all 0.2s ease;
+    margin-top: 0.5rem;
+  }
+  .add-idea-btn:hover { border-color: var(--rosa-viejo); color: var(--rosa-viejo); }
+
+  .floating-circle {
+    position: fixed; border-radius: 50%;
+    opacity: 0.08; pointer-events: none; z-index: -1;
+  }
+  .fc-1 {
+    width: 400px; height: 400px;
+    background: var(--rosa-viejo);
+    top: -100px; right: -100px;
+    animation: float 20s ease-in-out infinite;
+  }
+  .fc-2 {
+    width: 300px; height: 300px;
+    background: var(--verde-seco);
+    bottom: -80px; left: 20%;
+    animation: float 25s ease-in-out infinite reverse;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(5deg); }
+    66% { transform: translate(-20px, 20px) rotate(-3deg); }
+  }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(90, 74, 66, 0.4); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-overlay.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--blanco); border-radius: 24px;
+    padding: 2rem; max-width: 500px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 400;
+    margin-bottom: 1.5rem;
+  }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--texto-suave); margin-bottom: 0.5rem;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%; padding: 0.8rem 1rem;
+    border: 1px solid var(--beige-2); border-radius: 12px;
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem;
+    color: var(--texto); background: var(--crema);
+    transition: all 0.2s ease;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none; border-color: var(--rosa-viejo);
+    background: var(--blanco);
+  }
+  .form-group textarea {
+    resize: vertical; min-height: 80px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .modal-actions {
+    display: flex; gap: 0.6rem;
+    justify-content: flex-end; margin-top: 1.5rem;
+  }
+
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--texto); color: var(--blanco);
+    padding: 0.8rem 1.4rem; border-radius: 50px;
+    font-size: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 2000;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--beige-3); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--rosa-claro); }
+
+  #pdfContainer {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 794px;
+    background: white;
+    padding: 60px 50px;
+    font-family: 'Outfit', sans-serif;
+    color: #5a4a42;
+  }
+
+  @media (max-width: 1024px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    .menu-toggle { display: flex; }
+    .sidebar {
+      position: fixed; left: -280px; width: 260px; height: 100vh;
+      z-index: 99;
+      transition: left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 0 40px rgba(0,0,0,0.1);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(90, 74, 66, 0.3); backdrop-filter: blur(4px);
+      z-index: 98;
+    }
+    .sidebar-overlay.active { display: block; }
+    .main { padding: 4.5rem 1.2rem 2rem; }
+    .header { flex-direction: column; align-items: flex-start; }
+    .header-actions { width: 100%; }
+    .header-actions .btn {
+      flex: 1; justify-content: center;
+      padding: 0.7rem 1rem; font-size: 0.78rem;
+    }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+    .stat-card { padding: 1.1rem 1.2rem; }
+    .stat-value { font-size: 1.8rem; }
+    .content-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .mood-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    .mood-item { height: 140px; }
+    .pipeline { grid-template-columns: 1fr; }
+    .toast { bottom: 1rem; right: 1rem; left: 1rem; text-align: center; }
+    .modal { padding: 1.5rem; border-radius: 20px; }
+    .card-actions, .idea-actions { opacity: 1; }
+    .section-header { flex-direction: column; align-items: flex-start; }
+    .daily-quote { font-size: 1rem; padding: 1rem 1.2rem; }
+  }
+
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="floating-circle fc-1"></div>
+<div class="floating-circle fc-2"></div>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Menú">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">Studio<span>content dashboard · demo</span></div>
+
+    <nav class="nav">
+      <div class="nav-item active"><span class="nav-icon">✦</span> Inicio</div>
+      <div class="nav-item" onclick="scrollToSection('contenido')"><span class="nav-icon">◐</span> Contenido</div>
+      <div class="nav-item" onclick="scrollToSection('moodboard')"><span class="nav-icon">◑</span> Moodboard</div>
+      <div class="nav-item" onclick="scrollToSection('pipeline')"><span class="nav-icon">◈</span> Ideas</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sync-status" id="syncStatus">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncText">Demo · almacenamiento local</span>
+      </div>
+      <div class="mini-calendar">
+        <h4 id="calMonth">—</h4>
+        <div class="cal-dots" id="calDots"></div>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:1rem; width:100%;" onclick="resetDemo()">↺ Reiniciar demo</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="daily-quote" id="dailyQuote">
+      <span class="quote-tag">Hoy</span>
+      <span id="quoteText">—</span>
+    </div>
+
+    <div class="header">
+      <div>
+        <h1 id="greeting">Buen día ✿</h1>
+        <p class="header-sub" id="dateSub">—</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openModal('content')">+ Nuevo</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Posts cargados</div>
+        <div class="stat-value" id="statPosts">0</div>
+        <span class="stat-tag">total</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En borrador</div>
+        <div class="stat-value" id="statDraft">0</div>
+        <span class="stat-tag">por terminar</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ideas guardadas</div>
+        <div class="stat-value" id="statIdeas">0</div>
+        <span class="stat-tag">en pipeline</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Refs visuales</div>
+        <div class="stat-value" id="statMood">0</div>
+        <span class="stat-tag">moodboard</span>
+      </div>
+    </div>
+
+    <div id="contenido">
+      <div class="section-header">
+        <h2 class="section-title">
+          Contenido
+          <button class="add-btn" onclick="openModal('content')" aria-label="Agregar contenido">+</button>
+        </h2>
+        <div class="section-actions">
+          <button class="btn btn-pdf" onclick="exportPDF('content')">↓ PDF</button>
+        </div>
+      </div>
+      <div class="content-grid" id="contentGrid"></div>
+    </div>
+
+    <div id="moodboard" class="moodboard">
+      <div class="section-header">
+        <h2 class="section-title">
+          Moodboard
+          <button class="add-btn" onclick="openModal('mood')" aria-label="Agregar referencia">+</button>
+        </h2>
+        <div class="section-actions">
+          <button class="btn btn-pdf" onclick="exportPDF('mood')">↓ PDF</button>
+        </div>
+      </div>
+      <div class="mood-grid" id="moodGrid"></div>
+    </div>
+
+    <div id="pipeline">
+      <div class="section-header">
+        <h2 class="section-title">Pipeline de ideas</h2>
+        <div class="section-actions">
+          <button class="btn btn-pdf" onclick="exportPDF('pipeline')">↓ PDF</button>
+        </div>
+      </div>
+      <div class="pipeline" id="pipelineGrid"></div>
+    </div>
+
+    <!-- Project Footer -->
+    <div style="margin-top:3rem; padding:2.5rem 0; border-top:1px solid var(--beige-2);">
+      <div style="max-width:700px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:400; color:var(--texto); margin-bottom:1.2rem;">Sobre este proyecto</div>
+        <div style="font-size:0.82rem; color:var(--texto-suave); line-height:1.8; margin-bottom:1rem;">
+          <strong style="color:var(--texto);">Qué es:</strong> Dashboard de gestión de contenido para marcas de wellness y cuidado personal. Permite organizar contenido por tipo (carrusel, reel, story, post), gestionar un moodboard visual, y mantener un pipeline de ideas con flujo kanban (ideas → en proceso → publicado). Incluye exportación a PDF por sección para compartir con content managers o creadoras de contenido.
+        </div>
+        <div style="font-size:0.82rem; color:var(--texto-suave); line-height:1.8; margin-bottom:1rem;">
+          <strong style="color:var(--texto);">Lógica:</strong> Cuando una marca pequeña gestiona contenido para redes, la información suele vivir dispersa entre notas del celular, Canva, Google Docs y conversaciones de WhatsApp. Este dashboard centraliza todo en un solo lugar: qué se publica, cuándo, en qué formato, qué ideas hay pendientes y qué referencias visuales definen la estética. El export a PDF permite entregar briefs profesionales sin armar un documento desde cero.
+        </div>
+        <div style="font-size:0.82rem; color:var(--texto-suave); line-height:1.8; margin-bottom:1rem;">
+          <strong style="color:var(--texto);">Stack:</strong> HTML + CSS + JavaScript vanilla. Single-file. En esta versión demo los datos se guardan en localStorage. La versión en producción utiliza Firebase Firestore para sincronización en tiempo real entre dispositivos (compu y celular). Export a PDF con html2pdf.js. Saludo dinámico según hora del día. Frase diaria rotativa (30 frases sobre oficio y disciplina). Deploy en Vercel.
+        </div>
+        <div style="font-size:0.82rem; color:var(--texto-suave); line-height:1.8; margin-bottom:1rem;">
+          <strong style="color:var(--texto);">Rol:</strong> Product management, diseño de UX/UI, desarrollo front-end, integración con Firebase, diseño del sistema de export a PDF, estrategia de contenido (incluyendo el copy del carrusel educativo precargado como ejemplo), deploy y entrega.
+        </div>
+        <div style="background:var(--beige-1); border-radius:12px; padding:1rem 1.2rem; font-size:0.78rem; color:var(--texto-suave); line-height:1.7; margin-top:1.2rem;">
+          ⚠ <strong style="color:var(--texto);">Nota:</strong> Toda la información presentada en este dashboard es ficticia. Los contenidos, ideas y referencias fueron creados para esta demostración. El dashboard original fue desarrollado para una clienta real cuya identidad y datos se preservan por confidencialidad.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="modal-overlay" id="contentModal">
+  <div class="modal">
+    <h2 id="contentModalTitle">Nuevo contenido</h2>
+    <div class="form-group"><label>Título</label><input type="text" id="contentTitle" placeholder="Ej: Tu cara tiene 43 músculos"></div>
+    <div class="form-group"><label>Descripción</label><textarea id="contentExcerpt" placeholder="De qué se trata el contenido..."></textarea></div>
+    <div class="form-group"><label>Tipo</label>
+      <select id="contentType">
+        <option value="carrusel">Carrusel</option>
+        <option value="reel">Reel</option>
+        <option value="story">Story</option>
+        <option value="post">Post</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Estado</label>
+      <select id="contentStatus">
+        <option value="idea">Idea</option>
+        <option value="draft">Borrador</option>
+        <option value="ready">Listo</option>
+        <option value="published">Publicado</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Fecha (opcional)</label><input type="text" id="contentDate" placeholder="Ej: 16 abr"></div>
+    <div class="form-group"><label>Tags (separados por coma)</label><input type="text" id="contentTags" placeholder="educativo, sistema nervioso"></div>
+    <div class="modal-actions">
+      <button class="btn btn-soft" onclick="closeModal('content')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveContent()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="moodModal">
+  <div class="modal">
+    <h2>Nueva referencia visual</h2>
+    <div class="form-group"><label>Nombre</label><input type="text" id="moodLabel" placeholder="Ej: Tonos piel"></div>
+    <div class="form-group"><label>URL de imagen (opcional)</label><input type="text" id="moodImage" placeholder="https://..."></div>
+    <div class="form-group"><label>O elegí una paleta</label>
+      <select id="moodPalette">
+        <option value="rosa">Rosa viejo</option>
+        <option value="verde">Verde seco</option>
+        <option value="beige">Beige</option>
+        <option value="luz">Luz cálida</option>
+        <option value="organico">Orgánico</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-soft" onclick="closeModal('mood')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveMood()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ideaModal">
+  <div class="modal">
+    <h2>Nueva idea</h2>
+    <div class="form-group"><label>Idea</label><textarea id="ideaText" placeholder="Describí tu idea..."></textarea></div>
+    <div class="form-group"><label>Etiqueta corta</label><input type="text" id="ideaTag" placeholder="Ej: hook, serie, copy"></div>
+    <div class="form-group"><label>Prioridad / fecha</label><input type="text" id="ideaPriority" placeholder="Ej: ⚡ alta, esta semana"></div>
+    <div class="modal-actions">
+      <button class="btn btn-soft" onclick="closeModal('idea')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveIdea()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Guardado ✓</div>
+<div id="pdfContainer"></div>
+
+<!-- Demo mode: localStorage only -->
+
+<script>
+  // ─────────────────────────────────────────
+  // FRASES DIARIAS — sobre oficio y disciplina
+  // ─────────────────────────────────────────
+  const dailyQuotes = [
+    "El trabajo se hace cuando no tenés ganas. Esa es la única regla.",
+    "Empezar mal es mejor que no empezar.",
+    "La inspiración llega trabajando, no esperando.",
+    "Hacer algo todos los días, aunque sea poco, vence a hacer mucho de vez en cuando.",
+    "Lo que parece talento casi siempre es horas acumuladas.",
+    "Mostrar lo que hacés es parte del trabajo, no algo que viene después.",
+    "La constancia no es glamorosa pero es lo único que construye.",
+    "Confiar en el proceso significa seguir cuando no ves resultados.",
+    "La calidad sale de la cantidad. Primero hacé muchos, después hacé buenos.",
+    "Terminar algo mediocre te enseña más que pensar algo perfecto.",
+    "Lo que postergás hoy lo vas a tener que hacer igual, pero peor.",
+    "Tener disciplina es elegir lo que querés mucho por sobre lo que querés ahora.",
+    "Cada cosa que hacés con cuidado entrena el ojo para la próxima.",
+    "El bloqueo creativo casi siempre es miedo disfrazado.",
+    "Los oficios se construyen en silencio, no en feed.",
+    "La rutina aburrida es la que sostiene el trabajo bueno.",
+    "Empezá antes de sentirte lista. La sensación llega después.",
+    "Hacer es pensar. No al revés.",
+    "Lo que no medís se diluye. Lo que registrás, se acumula.",
+    "Tu mejor versión profesional aparece después de muchas versiones intermedias.",
+    "Compararte con quien empezó hace 10 años no tiene sentido. Compararte con vos de hace 6 meses, sí.",
+    "Editar es donde el trabajo realmente sucede.",
+    "La excelencia es un hábito, no un evento.",
+    "Hacer poco y bien es más rentable que hacer mucho y a medias.",
+    "El cliente nota cuando hay oficio detrás, aunque no sepa nombrarlo.",
+    "Los proyectos no se terminan, se abandonan en un momento bueno.",
+    "Si esperás motivación, vas a esperar para siempre. Sentate y empezá.",
+    "El profesional aparece, el amateur espera condiciones perfectas.",
+    "Cada cosa que entregás es una muestra de cómo trabajás.",
+    "Lo que hacés cuando nadie mira es exactamente lo que hacés siempre."
+  ];
+
+  function getDailyQuote() {
+    const start = new Date(new Date().getFullYear(), 0, 0);
+    const diff = new Date() - start;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return dailyQuotes[dayOfYear % dailyQuotes.length];
+  }
+
+  function setDailyQuote() {
+    document.getElementById('quoteText').textContent = getDailyQuote();
+  }
+
+  // ─────────────────────────────────────────
+  // STATE — localStorage with demo data
+  // ─────────────────────────────────────────
+  const STORAGE_KEY = 'studio-dashboard-demo';
+
+  const demoData = {
+    content: [
+      { title: 'Tu cara tiene 43 músculos', excerpt: 'Carrusel educativo sobre piel y sistema nervioso. Cómo el masaje facial activa el modo calma. Hook validado, 6 slides listas.', type: 'carrusel', status: 'ready', date: '16 abr', tags: ['educativo', 'sistema nervioso'] },
+      { title: '3 puntos de tensión facial', excerpt: 'Tutorial corto mostrando mandíbula, entrecejo y sienes. Música ambient, texto en pantalla, duración 30 segundos.', type: 'reel', status: 'draft', date: '18 abr', tags: ['tutorial', 'tensión'] },
+      { title: 'Antes & después — sesión real', excerpt: 'Testimonial con foto real, sin filtro. Sticker de pregunta para generar interacción. Copy: "Una sesión, cero filtro."', type: 'story', status: 'published', date: '14 abr', tags: ['social proof', 'testimonial'] },
+      { title: 'Mitos del masaje facial', excerpt: 'Desmitificar: "es solo relajación", "es lo mismo que skincare", "no tiene base científica". Formato pregunta/respuesta.', type: 'post', status: 'idea', date: '', tags: ['mitos', 'autoridad'] },
+      { title: 'Rutina matutina en 5 pasos', excerpt: 'Reel paso a paso de una rutina facial de 5 minutos. Filmado en primera persona, luz natural, sin música con voz en off.', type: 'reel', status: 'draft', date: '22 abr', tags: ['rutina', 'tutorial'] },
+      { title: 'Qué pasa cuando dormís tensa', excerpt: 'Carrusel sobre bruxismo nocturno y tensión facial al dormir. Datos + soluciones prácticas. 5 slides.', type: 'carrusel', status: 'idea', date: '', tags: ['educativo', 'bruxismo'] }
+    ],
+    mood: [
+      { label: 'Tonos piel', image: '', palette: 'rosa' },
+      { label: 'Naturaleza', image: '', palette: 'verde' },
+      { label: 'Texturas suaves', image: '', palette: 'beige' },
+      { label: 'Luz cálida', image: '', palette: 'luz' },
+      { label: 'Orgánico', image: '', palette: 'organico' }
+    ],
+    ideas: {
+      ideas: [
+        { text: '"Hay algo que tu piel necesita y no es una crema" — explorar como reel o carrusel', tag: 'hook', priority: '⚡ alta' },
+        { text: 'Serie "Tu cara habla" — cada post un músculo/emoción diferente', tag: 'serie', priority: '💡 media' },
+        { text: '¿Hace cuánto que nadie le dice a tu cuerpo "podés soltar"?', tag: 'copy emocional', priority: '⚡ alta' }
+      ],
+      proceso: [
+        { text: 'Carrusel piel + sistema nervioso — slides armadas, falta diseño final', tag: 'carrusel', priority: '16 abr' },
+        { text: 'Reel 3 puntos de tensión — guion listo, falta filmar', tag: 'reel', priority: '18 abr' },
+        { text: 'Definir paleta de colores definitiva para el feed', tag: 'branding', priority: 'esta semana' }
+      ],
+      publicado: [
+        { text: 'Story antes & después — 847 views, 23 respuestas', tag: 'story', priority: '14 abr' },
+        { text: 'Post "qué es un masaje facial" — intro al servicio', tag: 'post', priority: '10 abr' },
+        { text: 'Reel manos + aceite — aesthetic, sin texto', tag: 'reel', priority: '7 abr' }
+      ]
+    }
+  };
+
+  function loadState() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (!parsed.ideas) parsed.ideas = { ideas: [], proceso: [], publicado: [] };
+        ['ideas','proceso','publicado'].forEach(k => { if (!parsed.ideas[k]) parsed.ideas[k] = []; });
+        return parsed;
+      }
+    } catch (e) { console.error('Error loading state', e); }
+    return JSON.parse(JSON.stringify(demoData));
+  }
+
+  const defaultState = { content: [], mood: [], ideas: { ideas: [], proceso: [], publicado: [] } };
+  let state = loadState();
+  let editingItem = null;
+  let editingCol = null;
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) { console.error('Error saving', e); }
+    document.getElementById('syncDot').className = 'sync-dot';
+    document.getElementById('syncText').textContent = 'Guardado local';
+  }
+
+  function setGreeting() {
+    const h = new Date().getHours();
+    let greeting;
+    if (h >= 5 && h < 12) greeting = 'Buen día';
+    else if (h >= 12 && h < 20) greeting = 'Buenas tardes';
+    else greeting = 'Buenas noches';
+    document.getElementById('greeting').innerHTML = `${greeting} ✿`;
+
+    const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const d = new Date();
+    const total = state.content.length;
+    document.getElementById('dateSub').textContent =
+      `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]} — ${total} ${total === 1 ? 'contenido' : 'contenidos'} cargado${total === 1 ? '' : 's'}`;
+  }
+
+  function renderCalendar() {
+    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const d = new Date();
+    document.getElementById('calMonth').textContent = `${meses[d.getMonth()]} ${d.getFullYear()}`;
+    const today = d.getDate();
+    const dotsContainer = document.getElementById('calDots');
+    dotsContainer.innerHTML = '';
+    const start = Math.max(1, today - 4);
+    const end = today + 5;
+    for (let i = start; i <= end; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'cal-dot' + (i === today ? ' today' : '');
+      dot.textContent = i;
+      dotsContainer.appendChild(dot);
+    }
+  }
+
+  function renderContent() {
+    const grid = document.getElementById('contentGrid');
+    grid.innerHTML = '';
+    if (state.content.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'content-card empty';
+      empty.onclick = () => openModal('content');
+      empty.innerHTML = `<div class="empty-icon">✦</div><div>Empezá agregando tu primer contenido</div><div style="font-size:0.75rem; margin-top:0.4rem; opacity:0.7;">Tocá para crear</div>`;
+      grid.appendChild(empty);
+      return;
+    }
+    state.content.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'content-card';
+      card.onclick = (e) => { if (e.target.closest('.icon-btn')) return; editContent(idx); };
+      const tagsHtml = (item.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="card-type type-${escapeHtml(item.type)}">${escapeHtml(item.type)}</span>
+          <div class="card-actions">
+            <button class="icon-btn" onclick="event.stopPropagation(); editContent(${idx})" aria-label="Editar">✎</button>
+            <button class="icon-btn delete" onclick="event.stopPropagation(); deleteContent(${idx})" aria-label="Eliminar">×</button>
+          </div>
+        </div>
+        <div class="card-title">${escapeHtml(item.title)}</div>
+        <p class="card-excerpt">${escapeHtml(item.excerpt || '')}</p>
+        <div class="card-footer">
+          <span class="card-date">${escapeHtml(item.date || '—')}</span>
+          <div class="card-tags">${tagsHtml}</div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  const palettes = {
+    rosa: 'linear-gradient(135deg, #c4a0a0, #dfc5c5)',
+    verde: 'linear-gradient(135deg, #a3aa8e, #c5cbaf)',
+    beige: 'linear-gradient(135deg, #ede4d8, #d4c8b8)',
+    luz: 'linear-gradient(135deg, #c9b8a8, #dfc5c5)',
+    organico: 'linear-gradient(135deg, #c5cbaf, #f5efe6)'
+  };
+
+  function renderMood() {
+    const grid = document.getElementById('moodGrid');
+    grid.innerHTML = '';
+    state.mood.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'mood-item';
+      if (item.image) {
+        div.innerHTML = `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.label)}">
+          <button class="mood-delete" onclick="deleteMood(${idx})" aria-label="Eliminar">×</button>`;
+      } else {
+        const bg = palettes[item.palette] || palettes.rosa;
+        div.innerHTML = `<div class="mood-color" style="background: ${bg}">
+            <span class="mood-label">${escapeHtml(item.label)}</span>
+          </div>
+          <button class="mood-delete" onclick="deleteMood(${idx})" aria-label="Eliminar">×</button>`;
+      }
+      grid.appendChild(div);
+    });
+    const addBtn = document.createElement('div');
+    addBtn.className = 'mood-item mood-add';
+    addBtn.onclick = () => openModal('mood');
+    addBtn.innerHTML = '+<span>agregar</span>';
+    grid.appendChild(addBtn);
+  }
+
+  function renderPipeline() {
+    const cols = [
+      { key: 'ideas', label: 'Ideas', color: '#8a7a72' },
+      { key: 'proceso', label: 'En proceso', color: '#a3aa8e' },
+      { key: 'publicado', label: 'Publicado', color: '#c4a0a0' }
+    ];
+    const container = document.getElementById('pipelineGrid');
+    container.innerHTML = '';
+    cols.forEach(col => {
+      const ideas = state.ideas[col.key] || [];
+      const colDiv = document.createElement('div');
+      colDiv.className = 'pipeline-col';
+      let cardsHtml = '';
+      if (ideas.length === 0) {
+        cardsHtml = `<div class="idea-empty">Sin ideas todavía</div>`;
+      } else {
+        cardsHtml = ideas.map((idea, idx) => {
+          const isLast = col.key === 'publicado';
+          return `<div class="idea-card">
+            ${escapeHtml(idea.text)}
+            <div class="idea-meta">
+              <span>${escapeHtml(idea.tag || '')}</span>
+              <span style="display:flex; gap:0.4rem; align-items:center;">
+                <span>${escapeHtml(idea.priority || '')}</span>
+                <div class="idea-actions">
+                  ${!isLast ? `<button class="icon-btn" onclick="moveIdea('${col.key}', ${idx})" aria-label="Mover">→</button>` : ''}
+                  <button class="icon-btn delete" onclick="deleteIdea('${col.key}', ${idx})" aria-label="Eliminar">×</button>
+                </div>
+              </span>
+            </div>
+          </div>`;
+        }).join('');
+      }
+      colDiv.innerHTML = `
+        <div class="pipeline-header">
+          <div class="pipeline-dot" style="background:${col.color}"></div>
+          <h3>${col.label}</h3>
+          <span class="pipeline-count">${ideas.length}</span>
+        </div>
+        ${cardsHtml}
+        <button class="add-idea-btn" onclick="openModal('idea', '${col.key}')">+ Agregar idea</button>`;
+      container.appendChild(colDiv);
+    });
+  }
+
+  function renderStats() {
+    document.getElementById('statPosts').textContent = state.content.length;
+    document.getElementById('statDraft').textContent = state.content.filter(c => c.status === 'draft').length;
+    const totalIdeas = (state.ideas.ideas?.length || 0) + (state.ideas.proceso?.length || 0);
+    document.getElementById('statIdeas').textContent = totalIdeas;
+    document.getElementById('statMood').textContent = state.mood.length;
+  }
+
+  function openModal(type, ctx = null) {
+    if (type === 'content') {
+      editingItem = null;
+      document.getElementById('contentModalTitle').textContent = 'Nuevo contenido';
+      ['contentTitle','contentExcerpt','contentDate','contentTags'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('contentType').value = 'carrusel';
+      document.getElementById('contentStatus').value = 'idea';
+      document.getElementById('contentModal').classList.add('active');
+    } else if (type === 'mood') {
+      ['moodLabel','moodImage'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('moodPalette').value = 'rosa';
+      document.getElementById('moodModal').classList.add('active');
+    } else if (type === 'idea') {
+      editingCol = ctx || 'ideas';
+      ['ideaText','ideaTag','ideaPriority'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('ideaModal').classList.add('active');
+    }
+  }
+
+  function closeModal(type) {
+    document.getElementById(`${type}Modal`).classList.remove('active');
+    editingItem = null;
+    editingCol = null;
+  }
+
+  function editContent(idx) {
+    editingItem = idx;
+    const item = state.content[idx];
+    document.getElementById('contentModalTitle').textContent = 'Editar contenido';
+    document.getElementById('contentTitle').value = item.title;
+    document.getElementById('contentExcerpt').value = item.excerpt || '';
+    document.getElementById('contentType').value = item.type;
+    document.getElementById('contentStatus').value = item.status;
+    document.getElementById('contentDate').value = item.date || '';
+    document.getElementById('contentTags').value = (item.tags || []).join(', ');
+    document.getElementById('contentModal').classList.add('active');
+  }
+
+  function saveContent() {
+    const title = document.getElementById('contentTitle').value.trim();
+    if (!title) { showToast('Falta el título'); return; }
+    const item = {
+      title,
+      excerpt: document.getElementById('contentExcerpt').value.trim(),
+      type: document.getElementById('contentType').value,
+      status: document.getElementById('contentStatus').value,
+      date: document.getElementById('contentDate').value.trim(),
+      tags: document.getElementById('contentTags').value.split(',').map(t => t.trim()).filter(Boolean)
+    };
+    if (editingItem !== null && typeof editingItem === 'number') {
+      state.content[editingItem] = item;
+    } else {
+      state.content.unshift(item);
+    }
+    saveState(); renderAll(); closeModal('content'); showToast('Guardado ✓');
+  }
+
+  function deleteContent(idx) {
+    if (!confirm('¿Eliminar este contenido?')) return;
+    state.content.splice(idx, 1);
+    saveState(); renderAll(); showToast('Eliminado');
+  }
+
+  function saveMood() {
+    const label = document.getElementById('moodLabel').value.trim();
+    if (!label) { showToast('Falta el nombre'); return; }
+    state.mood.push({
+      label,
+      image: document.getElementById('moodImage').value.trim(),
+      palette: document.getElementById('moodPalette').value
+    });
+    saveState(); renderAll(); closeModal('mood'); showToast('Referencia agregada ✓');
+  }
+
+  function deleteMood(idx) {
+    if (!confirm('¿Eliminar esta referencia?')) return;
+    state.mood.splice(idx, 1);
+    saveState(); renderAll();
+  }
+
+  function saveIdea() {
+    const text = document.getElementById('ideaText').value.trim();
+    if (!text) { showToast('Falta la idea'); return; }
+    const idea = {
+      text,
+      tag: document.getElementById('ideaTag').value.trim(),
+      priority: document.getElementById('ideaPriority').value.trim()
+    };
+    const col = editingCol || 'ideas';
+    if (!state.ideas[col]) state.ideas[col] = [];
+    state.ideas[col].push(idea);
+    saveState(); renderAll(); closeModal('idea'); showToast('Idea guardada ✓');
+  }
+
+  function deleteIdea(col, idx) {
+    state.ideas[col].splice(idx, 1);
+    saveState(); renderAll();
+  }
+
+  function moveIdea(col, idx) {
+    const order = ['ideas', 'proceso', 'publicado'];
+    const currentPos = order.indexOf(col);
+    const nextCol = order[currentPos + 1];
+    if (!nextCol) return;
+    const idea = state.ideas[col].splice(idx, 1)[0];
+    if (!state.ideas[nextCol]) state.ideas[nextCol] = [];
+    state.ideas[nextCol].push(idea);
+    saveState(); renderAll();
+    showToast(`Movido a ${nextCol}`);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ─────────────────────────────────────────
+  // PDF EXPORT
+  // ─────────────────────────────────────────
+  function exportPDF(section) {
+    const container = document.getElementById('pdfContainer');
+    const today = new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    let html = '';
+    let filename = '';
+
+    if (section === 'content') {
+      filename = `studio-contenido-${new Date().toISOString().split('T')[0]}.pdf`;
+      html = generateContentPDF(today);
+    } else if (section === 'mood') {
+      filename = `studio-moodboard-${new Date().toISOString().split('T')[0]}.pdf`;
+      html = generateMoodPDF(today);
+    } else if (section === 'pipeline') {
+      filename = `studio-ideas-${new Date().toISOString().split('T')[0]}.pdf`;
+      html = generatePipelinePDF(today);
+    }
+
+    container.innerHTML = html;
+
+    const opt = {
+      margin: 0,
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
+    };
+
+    showToast('Generando PDF...');
+    html2pdf().set(opt).from(container).save().then(() => {
+      container.innerHTML = '';
+      showToast('PDF descargado ✓');
+    });
+  }
+
+  function pdfHeader(title, today) {
+    return `
+      <div style="border-bottom: 2px solid #c4a0a0; padding-bottom: 20px; margin-bottom: 30px;">
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; color: #5a4a42;">
+          Studio · Dashboard
+        </div>
+        <div style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #8a7a72; margin-top: 4px;">
+          ${title}
+        </div>
+        <div style="font-size: 10px; color: #8a7a72; margin-top: 8px; font-style: italic;">
+          Generado el ${today}
+        </div>
+      </div>
+    `;
+  }
+
+  function generateContentPDF(today) {
+    if (state.content.length === 0) {
+      return pdfHeader('Brief de contenido', today) + `<p style="color:#8a7a72; font-style:italic;">Sin contenido cargado todavía.</p>`;
+    }
+    const cards = state.content.map(item => {
+      const tags = (item.tags || []).map(t => `<span style="font-size:9px; padding:2px 8px; background:#f5efe6; color:#8a7a72; border-radius:50px; margin-right:4px;">${escapeHtml(t)}</span>`).join('');
+      const typeColors = { carrusel: '#dfc5c5', reel: '#c5cbaf', story: '#ede4d8', post: '#d4cde0' };
+      const typeColor = typeColors[item.type] || '#ede4d8';
+      const statusLabels = { idea: 'Idea', draft: 'Borrador', ready: 'Listo', published: 'Publicado' };
+      return `
+        <div style="background: white; border: 1px solid #ede4d8; border-radius: 14px; padding: 20px; margin-bottom: 16px; page-break-inside: avoid;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 3px 10px; border-radius: 50px; background: ${typeColor}; color: #5a4a42; font-weight: 500;">
+              ${escapeHtml(item.type)}
+            </span>
+            <span style="font-size: 10px; color: #8a7a72;">${escapeHtml(statusLabels[item.status] || item.status)} · ${escapeHtml(item.date || '—')}</span>
+          </div>
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: #5a4a42; margin-bottom: 8px;">
+            ${escapeHtml(item.title)}
+          </div>
+          <p style="font-size: 12px; color: #6a5a52; line-height: 1.5; margin-bottom: 12px;">
+            ${escapeHtml(item.excerpt || '')}
+          </p>
+          ${tags ? `<div>${tags}</div>` : ''}
+        </div>`;
+    }).join('');
+    return pdfHeader('Brief de contenido', today) + cards;
+  }
+
+  function generateMoodPDF(today) {
+    if (state.mood.length === 0) {
+      return pdfHeader('Moodboard', today) + `<p style="color:#8a7a72; font-style:italic;">Sin referencias cargadas todavía.</p>`;
+    }
+    const items = state.mood.map(item => {
+      let visual = '';
+      if (item.image) {
+        visual = `<div style="width:100%; height:160px; background-image: url('${escapeHtml(item.image)}'); background-size: cover; background-position: center; border-radius: 10px;"></div>`;
+      } else {
+        const bg = palettes[item.palette] || palettes.rosa;
+        visual = `<div style="width:100%; height:160px; background: ${bg}; border-radius: 10px;"></div>`;
+      }
+      return `
+        <div style="display: inline-block; width: 48%; margin: 1%; vertical-align: top; page-break-inside: avoid;">
+          ${visual}
+          <div style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #5a4a42; margin-top: 8px; text-align: center;">
+            ${escapeHtml(item.label)}
+          </div>
+        </div>`;
+    }).join('');
+    return pdfHeader('Moodboard & referencias visuales', today) + `<div style="text-align: center;">${items}</div>`;
+  }
+
+  function generatePipelinePDF(today) {
+    const cols = [
+      { key: 'ideas', label: 'Ideas', color: '#8a7a72' },
+      { key: 'proceso', label: 'En proceso', color: '#a3aa8e' },
+      { key: 'publicado', label: 'Publicado', color: '#c4a0a0' }
+    ];
+    const sections = cols.map(col => {
+      const ideas = state.ideas[col.key] || [];
+      let cards = '';
+      if (ideas.length === 0) {
+        cards = `<p style="font-size: 11px; color: #8a7a72; font-style: italic; padding: 10px;">Sin ideas en esta etapa.</p>`;
+      } else {
+        cards = ideas.map(idea => `
+          <div style="background: #f5efe6; border-radius: 10px; padding: 14px; margin-bottom: 10px; page-break-inside: avoid;">
+            <div style="font-size: 12px; color: #5a4a42; line-height: 1.5; margin-bottom: 6px;">
+              ${escapeHtml(idea.text)}
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 9px; color: #8a7a72;">
+              <span>${escapeHtml(idea.tag || '')}</span>
+              <span>${escapeHtml(idea.priority || '')}</span>
+            </div>
+          </div>`).join('');
+      }
+      return `
+        <div style="margin-bottom: 30px; page-break-inside: avoid;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #ede4d8;">
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: ${col.color};"></div>
+            <h3 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #5a4a42; font-weight: 600;">
+              ${col.label} <span style="color: #8a7a72; font-weight: 400;">· ${ideas.length}</span>
+            </h3>
+          </div>
+          ${cards}
+        </div>`;
+    }).join('');
+    return pdfHeader('Pipeline de ideas', today) + sections;
+  }
+
+  function renderAll() {
+    setGreeting();
+    renderContent();
+    renderMood();
+    renderPipeline();
+    renderStats();
+  }
+
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+  });
+
+  document.getElementById('sidebarOverlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+  });
+
+  function scrollToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    }
+  });
+
+  function resetDemo() {
+    if (!confirm('¿Reiniciar con datos de ejemplo?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    state = JSON.parse(JSON.stringify(demoData));
+    saveState();
+    renderAll();
+    showToast('Demo reiniciado ✓');
+  }
+
+  // Init
+  document.getElementById('syncDot').className = 'sync-dot';
+  setDailyQuote();
+  renderAll();
+  renderCalendar();
+</script>
+
+</body>
+</html>

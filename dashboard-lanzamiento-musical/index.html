@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artist Strategic Dashboard — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--celeste:#c8dfe6;--rosa:#ddb3c5;--crema:#ede5d8;--arena:#cead85;--durazno:#e09a7c;--salmon:#d88a72;--text:#1a1a1a;--text-light:#3d3830;--text-muted:#6b6058;--white:#faf8f5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--white);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden}
+.header{padding:52px 40px 36px;text-align:center;position:relative;background:linear-gradient(180deg,var(--celeste) 0%,var(--white) 100%)}
+.header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none}
+.header-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;position:relative}
+.header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,9vw,88px);letter-spacing:6px;line-height:1;margin-bottom:6px;position:relative}
+.header h2{font-family:'Playfair Display',serif;font-size:clamp(18px,3vw,26px);font-weight:400;font-style:italic;color:var(--text-light);margin-bottom:18px;position:relative}
+.header-meta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.header-badge{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;padding:5px 14px;border-radius:20px;border:1.5px solid var(--text);color:var(--text);background:rgba(255,255,255,0.45)}
+.demo-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:20px;background:rgba(0,0,0,0.06);color:var(--text-muted);margin-top:12px;display:inline-block;position:relative}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.drive-section{padding:28px 0 8px}.drive-section-label{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:14px}
+.drive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.drive-folder{position:relative;text-decoration:none;color:var(--text);display:block;transition:transform 0.2s;cursor:pointer}.drive-folder:hover{transform:translateY(-2px)}
+.drive-folder-tab{width:55%;height:18px;border-radius:10px 10px 0 0;position:relative;z-index:1}
+.drive-folder-body{border-radius:0 12px 12px 12px;padding:16px 18px 14px;position:relative;min-height:70px;display:flex;flex-direction:column;justify-content:center}
+.drive-folder:nth-child(1) .drive-folder-tab,.drive-folder:nth-child(1) .drive-folder-body{background:var(--celeste)}
+.drive-folder:nth-child(2) .drive-folder-tab,.drive-folder:nth-child(2) .drive-folder-body{background:var(--rosa)}
+.drive-folder:nth-child(3) .drive-folder-tab,.drive-folder:nth-child(3) .drive-folder-body{background:var(--arena)}
+.drive-folder:nth-child(4) .drive-folder-tab,.drive-folder:nth-child(4) .drive-folder-body{background:var(--durazno)}
+.drive-folder-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;line-height:1.2}.drive-folder-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+.drive-folder-arrow{position:absolute;top:14px;right:16px;font-size:16px;opacity:0.35;transition:opacity 0.2s}.drive-folder:hover .drive-folder-arrow{opacity:0.7}
+.modules-section{padding:32px 0 60px}.tab-stack{display:flex;flex-direction:column;gap:6px}.tab-item{position:relative}
+.tab-handle{position:relative;cursor:pointer;display:flex;align-items:center;user-select:none;transition:filter 0.2s}.tab-handle:hover{filter:brightness(0.96)}
+.tab-handle-tab{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:16px 16px 0 0;position:relative;z-index:2}
+.tab-handle-body{flex:1;height:4px;border-radius:0 16px 0 0;align-self:flex-end}
+.tab-handle-arrow{position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:18px;opacity:0.4;transition:transform 0.4s,opacity 0.3s;z-index:3}
+.tab-item.active .tab-handle-arrow{transform:translateY(-50%) rotate(180deg);opacity:0.7}
+.tab-number{font-family:'DM Mono',monospace;font-size:12px;opacity:0.5}
+.tab-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,3.5vw,30px);letter-spacing:2px;line-height:1}
+.tab-item:nth-child(1) .tab-handle-tab,.tab-item:nth-child(1) .tab-handle-body,.tab-item:nth-child(1) .tab-content{background:var(--celeste)}
+.tab-item:nth-child(2) .tab-handle-tab,.tab-item:nth-child(2) .tab-handle-body,.tab-item:nth-child(2) .tab-content{background:var(--rosa)}
+.tab-item:nth-child(3) .tab-handle-tab,.tab-item:nth-child(3) .tab-handle-body,.tab-item:nth-child(3) .tab-content{background:var(--crema)}
+.tab-item:nth-child(4) .tab-handle-tab,.tab-item:nth-child(4) .tab-handle-body,.tab-item:nth-child(4) .tab-content{background:var(--arena)}
+.tab-item:nth-child(5) .tab-handle-tab,.tab-item:nth-child(5) .tab-handle-body,.tab-item:nth-child(5) .tab-content{background:var(--durazno)}
+.tab-item:nth-child(6) .tab-handle-tab,.tab-item:nth-child(6) .tab-handle-body,.tab-item:nth-child(6) .tab-content{background:var(--salmon)}
+.tab-content{max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.25,0.46,0.45,0.94),padding 0.4s ease;padding:0 28px;border-radius:0 0 16px 16px}
+.tab-item.active .tab-content{max-height:8000px;padding:12px 28px 32px}
+.mod-section{margin-bottom:22px}.mod-section:last-child{margin-bottom:0}
+.mod-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;padding-top:14px;border-top:1px solid rgba(0,0,0,0.07)}
+.mod-section:first-child .mod-label{border-top:none;padding-top:4px}
+.mod-text{font-size:14px;color:var(--text-light);line-height:1.75;margin-bottom:6px}.mod-text strong{color:var(--text)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:10px 0}
+.stat-card{background:rgba(255,255,255,0.4);border-radius:12px;padding:14px 18px}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;line-height:1}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:2px}
+.stat-tag{font-family:'DM Mono',monospace;font-size:10px;display:inline-block;padding:2px 8px;border-radius:8px;margin-top:5px;background:rgba(0,0,0,0.07);color:var(--text-muted)}
+.stat-tag.warn{background:rgba(180,70,30,0.1);color:#8a3d1a}.stat-tag.ok{background:rgba(40,120,70,0.1);color:#1a5a38}
+.pillars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0}
+.pillar-card{background:rgba(255,255,255,0.4);border-radius:12px;padding:14px 18px}.pillar-title{font-weight:700;font-size:14px;margin-bottom:4px}.pillar-desc{font-size:12px;color:var(--text-muted);line-height:1.5}
+.alert-box{background:rgba(180,60,30,0.07);border-left:3px solid var(--durazno);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text-light);line-height:1.65}.alert-box strong{color:#8a3d1a}
+.ref-card{background:rgba(255,255,255,0.35);border-radius:12px;padding:16px 20px;margin-bottom:10px}.ref-card:last-child{margin-bottom:0}
+.ref-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px}.ref-sub{font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:6px}.ref-text{font-size:13px;color:var(--text-light);line-height:1.65}
+.timeline{position:relative;padding-left:24px;margin:10px 0}.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:rgba(0,0,0,0.1)}
+.tl-item{position:relative;padding:8px 0 8px 16px}.tl-item::before{content:'';position:absolute;left:-21px;top:14px;width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,0.18);border:2px solid rgba(255,255,255,0.4)}
+.tl-item.now::before{background:var(--text)}.tl-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)}.tl-title{font-weight:600;font-size:14px;margin:1px 0}.tl-desc{font-size:12px;color:var(--text-muted)}
+.links-block{margin-top:18px;padding-top:14px;border-top:1px dashed rgba(0,0,0,0.1)}.links-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.link-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}.link-row a{color:var(--text);text-decoration:none;font-size:13px;border-bottom:1px solid rgba(0,0,0,0.12);word-break:break-all;transition:border-color 0.2s}.link-row a:hover{border-color:var(--text)}
+.link-del{cursor:pointer;opacity:0.25;font-size:13px;background:none;border:none;color:var(--text);padding:2px;transition:opacity 0.2s}.link-del:hover{opacity:0.7}
+.add-link{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.35);border:1px dashed rgba(0,0,0,0.12);border-radius:8px;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all 0.2s;margin-top:6px}.add-link:hover{background:rgba(255,255,255,0.55);color:var(--text)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.25);backdrop-filter:blur(4px);z-index:1000;justify-content:center;align-items:center}.modal-bg.show{display:flex}
+.modal{background:var(--white);border-radius:18px;padding:28px;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.14)}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:14px}
+.modal input{width:100%;padding:11px 14px;border:1px solid rgba(0,0,0,0.1);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:8px;outline:none;background:var(--crema);transition:border-color 0.2s}.modal input:focus{border-color:rgba(0,0,0,0.3)}
+.modal-btns{display:flex;gap:8px;margin-top:6px}.modal-btns button{flex:1;padding:10px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.btn-ok{background:var(--text);color:var(--white)}.btn-ok:hover{opacity:0.85}.btn-no{background:rgba(0,0,0,0.05);color:var(--text)}.btn-no:hover{background:rgba(0,0,0,0.1)}
+.footer{text-align:center;padding:40px 24px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:1px}
+@media(max-width:768px){.header{padding:36px 20px 28px}.header h1{font-size:52px;letter-spacing:4px}.wrap{padding:0 16px}.tab-handle-tab{padding:12px 20px}.tab-title{font-size:20px;letter-spacing:1px}.tab-item.active .tab-content{padding:10px 18px 24px}.stats-grid,.drive-grid,.pillars-grid{grid-template-columns:1fr 1fr}.modal{padding:22px;width:94%}}
+@media(max-width:480px){.header{padding:28px 16px 22px}.header h1{font-size:42px;letter-spacing:3px}.header-label{font-size:9px}.wrap{padding:0 12px}.tab-handle-tab{padding:10px 16px;border-radius:12px 12px 0 0}.tab-handle-body{border-radius:0 12px 0 0}.tab-title{font-size:17px}.tab-content{border-radius:0 0 12px 12px}.tab-item.active .tab-content{padding:8px 14px 20px}.stats-grid,.drive-grid,.pillars-grid{grid-template-columns:1fr}.drive-folder-tab{height:14px;border-radius:8px 8px 0 0}.drive-folder-body{border-radius:0 10px 10px 10px;padding:12px 14px 10px}.ref-card{padding:12px 14px}}
+@media print{.tab-content{max-height:none!important;padding:14px 28px!important}.add-link,.link-del,.tab-handle-arrow{display:none}}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="header-label">Artist Consulting · Strategic Dashboard</div>
+<h1>LUNA MONTES</h1>
+<h2>Espejos del Pop · 2026</h2>
+<div class="header-meta">
+<span class="header-badge">10 canciones · 10 espejos</span>
+<span class="header-badge">Lanzamiento Mayo 2026</span>
+<span class="header-badge">Ref: AC-2026-001</span>
+</div>
+<div class="demo-badge">DEMO · PORTFOLIO PROJECT</div>
+</div>
+<div class="wrap">
+<div class="drive-section">
+<div class="drive-section-label">ARCHIVOS DEL PROYECTO</div>
+<div class="drive-grid">
+<div class="drive-folder"><div class="drive-folder-tab"></div><div class="drive-folder-body"><div class="drive-folder-name">MEJORES FOTOS DEL ARTISTA</div><div class="drive-folder-sub">Selección actualizada</div><span class="drive-folder-arrow">↗</span></div></div>
+<div class="drive-folder"><div class="drive-folder-tab"></div><div class="drive-folder-body"><div class="drive-folder-name">MATERIAL AUDIOVISUAL</div><div class="drive-folder-sub">Videos + sesiones recientes</div><span class="drive-folder-arrow">↗</span></div></div>
+<div class="drive-folder"><div class="drive-folder-tab"></div><div class="drive-folder-body"><div class="drive-folder-name">PITCH DEL PROYECTO</div><div class="drive-folder-sub">Documento de presentación</div><span class="drive-folder-arrow">↗</span></div></div>
+<div class="drive-folder"><div class="drive-folder-tab"></div><div class="drive-folder-body"><div class="drive-folder-name">ILUSTRACIONES DE SENCILLOS</div><div class="drive-folder-sub">Arte conceptual · covers</div><span class="drive-folder-arrow">↗</span></div></div>
+</div></div>
+<div class="modules-section"><div class="tab-stack">
+
+<!-- 01 --><div class="tab-item" data-module="imagen"><div class="tab-handle" onclick="toggleTab(this)"><div class="tab-handle-tab"><span class="tab-number">01</span><span class="tab-title">IMAGEN Y MARCA</span></div><div class="tab-handle-body"></div><span class="tab-handle-arrow">↓</span></div>
+<div class="tab-content">
+<div class="mod-section"><div class="mod-label">Concepto central</div>
+<p class="mod-text"><strong>Espejos del Pop</strong> es un universo de 10 canciones que exploran las versiones internas de una misma persona. La artista adopta el rol de <strong>narradora introspectiva</strong> como personaje escénico: alguien que refleja emociones con honestidad cruda y humor sutil. El tono tiene que ser elegante y personal sin caer en lo autocompasivo — la vulnerabilidad es su fuerte, no la victimización.</p></div>
+<div class="mod-section"><div class="mod-label">Estado actual</div>
+<p class="mod-text">La estética gráfica del proyecto apunta bien al nicho. Las ilustraciones logran un estilo coherente con el universo de los espejos — cada sencillo es un reflejo distinto con su propia escena emocional.</p>
+<p class="mod-text">Se están trabajando dos líneas de vestuario: una para redes (casual, accesible) y otra para shows (conceptual, con elementos reflectantes que refuerzan el concepto).</p></div>
+<div class="mod-section"><div class="mod-label">Diagnóstico</div>
+<p class="mod-text">El principal problema: la <strong>identidad visual y el mensaje comunicacional no están unificados</strong> entre plataformas. Instagram funciona como canal principal de identidad pero no convierte la exposición en crecimiento real de marca.</p>
+<p class="mod-text">El contenido más natural, menos producido y más humano es el que mejor funciona. Amplificar la parte auténtica y personal es la clave — lo menos elaborado genera más impacto orgánico.</p></div>
+<div class="alert-box"><strong>Acción prioritaria:</strong> Unificar la identidad visual y el mensaje comunicacional en todas las plataformas. El personaje tiene que ser coherente entre shows, redes, copy y música.</div>
+<div class="links-block"><div class="links-label">Links útiles</div><div class="links-container" data-module="imagen"></div><button class="add-link" onclick="openModal('imagen')">+ Agregar link</button></div>
+</div></div>
+
+<!-- 02 --><div class="tab-item" data-module="redes"><div class="tab-handle" onclick="toggleTab(this)"><div class="tab-handle-tab"><span class="tab-number">02</span><span class="tab-title">REDES Y MÉTRICAS</span></div><div class="tab-handle-body"></div><span class="tab-handle-arrow">↓</span></div>
+<div class="tab-content">
+<div class="mod-section"><div class="mod-label">El dato más importante</div>
+<p class="mod-text">En el último año, la artista generó <strong>los mismos streams orgánicos que en los tres años anteriores combinados</strong>. Punto de inflexión real. Sin embargo, todavía no se logró entrar en <strong>playlists editoriales de Spotify</strong>.</p></div>
+<div class="mod-section"><div class="mod-label">Métricas por plataforma</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-value">8.5K</div><div class="stat-label">Instagram · seguidores</div><div class="stat-tag ok">Canal principal · orgánico</div></div>
+<div class="stat-card"><div class="stat-value">15K</div><div class="stat-label">TikTok · seguidores</div><div class="stat-tag warn">Pauta · engagement bajo</div></div>
+<div class="stat-card"><div class="stat-value">65K</div><div class="stat-label">Spotify · reprod. máx.</div><div class="stat-tag warn">60% streams pagos</div></div>
+<div class="stat-card"><div class="stat-value">12K</div><div class="stat-label">YouTube · views orgánicos</div><div class="stat-tag">Portfolio + posicionamiento</div></div>
+</div></div>
+<div class="mod-section"><div class="mod-label">Análisis por canal</div>
+<p class="mod-text"><strong>TikTok</strong> tiene comunidad parcialmente inflada por pauta. Lo que mejor funciona es el contenido casero y hablado.</p>
+<p class="mod-text"><strong>Instagram</strong> es el canal más auténtico. 8.500+ seguidores orgánicos, publicaciones promedian 2.000–4.000 views.</p>
+<p class="mod-text"><strong>Spotify</strong> tuvo un pico de 65K reproducciones con campaña. <strong>60% streams pagos, 40% orgánicos</strong>. Sin playlists editoriales, el crecimiento tiene techo.</p></div>
+<div class="mod-section"><div class="mod-label">Exposición vs. conversión</div>
+<div class="alert-box"><strong>Puntos de fuga:</strong> TikTok no convierte hacia Instagram ni Spotify. La prensa no impacta en plataformas. La pauta no genera comunidad orgánica fidelizada.</div></div>
+<div class="links-block"><div class="links-label">Links útiles</div><div class="links-container" data-module="redes"></div><button class="add-link" onclick="openModal('redes')">+ Agregar link</button></div>
+</div></div>
+
+<!-- 03 --><div class="tab-item" data-module="contenidos"><div class="tab-handle" onclick="toggleTab(this)"><div class="tab-handle-tab"><span class="tab-number">03</span><span class="tab-title">ESTRATEGIA DE CONTENIDOS</span></div><div class="tab-handle-body"></div><span class="tab-handle-arrow">↓</span></div>
+<div class="tab-content">
+<div class="mod-section"><div class="mod-label">Público objetivo</div>
+<p class="mod-text">Personas de <strong>25 a 40 años, urbanas, consumidoras de pop en español</strong>. Buscan autenticidad, ingenio y algo que se sienta real.</p></div>
+<div class="mod-section"><div class="mod-label">Pilares de contenido</div>
+<div class="pillars-grid">
+<div class="pillar-card"><div class="pillar-title">🪞 El Personaje</div><div class="pillar-desc">La narradora introspectiva en situaciones cotidianas. Es el hilo que une todo.</div></div>
+<div class="pillar-card"><div class="pillar-title">🎵 Musical</div><div class="pillar-desc">Previews, lanzamientos, letras, curiosidades del disco.</div></div>
+<div class="pillar-card"><div class="pillar-title">🎬 Proceso Creativo</div><div class="pillar-desc">Detrás de cámaras, sesiones de estudio, composición.</div></div>
+<div class="pillar-card"><div class="pillar-title">💬 Conversación</div><div class="pillar-desc">La voz personal como diferenciador. Opiniones, reflexiones, momentos reales.</div></div>
+</div></div>
+<div class="links-block"><div class="links-label">Links útiles</div><div class="links-container" data-module="contenidos"></div><button class="add-link" onclick="openModal('contenidos')">+ Agregar link</button></div>
+</div></div>
+
+<!-- 04 --><div class="tab-item" data-module="lanzamiento"><div class="tab-handle" onclick="toggleTab(this)"><div class="tab-handle-tab"><span class="tab-number">04</span><span class="tab-title">PLAN DE LANZAMIENTO</span></div><div class="tab-handle-body"></div><span class="tab-handle-arrow">↓</span></div>
+<div class="tab-content">
+<div class="mod-section"><div class="mod-label">Fecha</div>
+<p class="mod-text" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;line-height:1;">MAYO 2026</p></div>
+<div class="mod-section"><div class="mod-label">Pre-roll · 5 a 10 días antes</div>
+<p class="mod-text">Generar expectativa sostenida sin quemar contenido. Activar <strong>pre-save en Spotify</strong>. Todos los assets visuales preparados con anticipación.</p></div>
+<div class="mod-section"><div class="mod-label">Distribución</div>
+<p class="mod-text">Distribuidor independiente con acceso a pitch de playlists editoriales. El pitch activo a editoriales de Spotify es la acción más importante — entrar en una editorial puede cambiar la escala del proyecto.</p></div>
+<div class="mod-section"><div class="mod-label">Evolución del proyecto</div>
+<div class="timeline">
+<div class="tl-item"><div class="tl-date">2019</div><div class="tl-title">Primeros covers y shows acústicos</div><div class="tl-desc">Formación artística. Base de seguidores orgánica.</div></div>
+<div class="tl-item"><div class="tl-date">2021</div><div class="tl-title">Primeros singles originales</div><div class="tl-desc">Identidad en formación. Producción casera.</div></div>
+<div class="tl-item"><div class="tl-date">2023</div><div class="tl-title">Transición al pop contemporáneo</div><div class="tl-desc">Nuevo productor. Salto en calidad sonora.</div></div>
+<div class="tl-item"><div class="tl-date">2024</div><div class="tl-title">Productor principal entra al proyecto</div><div class="tl-desc">~10 canciones producidas. Nivel profesional.</div></div>
+<div class="tl-item now"><div class="tl-date">Mayo 2026</div><div class="tl-title">ESPEJOS DEL POP — Disco Debut</div><div class="tl-desc">10 temas. 5 sencillos ya lanzados.</div></div>
+</div></div>
+<div class="links-block"><div class="links-label">Links útiles</div><div class="links-container" data-module="lanzamiento"></div><button class="add-link" onclick="openModal('lanzamiento')">+ Agregar link</button></div>
+</div></div>
+
+<!-- 05 --><div class="tab-item" data-module="sonora"><div class="tab-handle" onclick="toggleTab(this)"><div class="tab-handle-tab"><span class="tab-number">05</span><span class="tab-title">ASESORÍA SONORA</span></div><div class="tab-handle-body"></div><span class="tab-handle-arrow">↓</span></div>
+<div class="tab-content">
+<div class="mod-section"><div class="mod-label">Diagnóstico</div>
+<p class="mod-text">Disco completamente terminado. Algunas producciones caen en una zona gris donde "no destacan ni perjudican" — y eso no alcanza. Cuando una producción no se destaca, no le permite a la artista lucirse vocalmente.</p>
+<p class="mod-text">El ingreso del <strong>productor principal actual</strong> fue el cambio que elevó la calidad y modernidad del proyecto. Sus producciones tienen el nivel que el pop actual exige.</p></div>
+<div class="mod-section"><div class="mod-label">Dirección para la próxima etapa</div>
+<p class="mod-text">Mantener y superar la línea de calidad alcanzada. Evaluar la incorporación de un <strong>compositor especializado en melodías</strong> — algunas no son lo suficientemente pegajosas, y para el pop eso es determinante.</p></div>
+<div class="alert-box"><strong>Estrategia:</strong> Tres canciones por mes hasta completar el disco. Búsqueda activa de playlisting en paralelo.</div>
+<div class="links-block"><div class="links-label">Links útiles</div><div class="links-container" data-module="sonora"></div><button class="add-link" onclick="openModal('sonora')">+ Agregar link</button></div>
+</div></div>
+
+<!-- 06 --><div class="tab-item" data-module="referencias"><div class="tab-handle" onclick="toggleTab(this)"><div class="tab-handle-tab"><span class="tab-number">06</span><span class="tab-title">REFERENCIAS ESTRATÉGICAS</span></div><div class="tab-handle-body"></div><span class="tab-handle-arrow">↓</span></div>
+<div class="tab-content">
+<div class="mod-section"><div class="mod-label">Patrón común</div>
+<p class="mod-text">El <strong>personaje trasciende los lanzamientos</strong>. Hay un <strong>productor ancla</strong> que define la identidad sonora. Una <strong>colaboración estratégica</strong> catapulta la visibilidad. Los singles son <strong>capítulos de una historia</strong>. Y siempre hay un <strong>video o performance singular</strong> como punto de inflexión viral.</p></div>
+<div class="mod-section"><div class="mod-label">Casos de referencia</div>
+<div class="ref-card"><div class="ref-name">CASO A — ARTISTA CROSSOVER</div><div class="ref-sub">Actriz + cantante · Personaje consistente en cada canal</div><div class="ref-text">Logró que su personaje exista en cada interacción, no solo en la música. Lección: el personaje tiene que respirar fuera de los lanzamientos.</div></div>
+<div class="ref-card"><div class="ref-name">CASO B — LP CONCEPTUAL</div><div class="ref-sub">Disco con arco narrativo</div><div class="ref-text">Comunicar explícitamente el arco del disco: cada sencillo es un espejo, cada espejo una emoción. Genera engagement narrativo sostenido.</div></div>
+<div class="ref-card"><div class="ref-name">CASO C — PERFORMANCE VIRAL</div><div class="ref-sub">Video íntimo como punto de inflexión</div><div class="ref-text">Un set acústico de 5 a 10 minutos que muestre el universo completo — personaje, música, personalidad — en un solo lugar.</div></div>
+<div class="ref-card"><div class="ref-name">CASO D — PROCESO COMO CONTENIDO</div><div class="ref-sub">Detrás de escena como estrategia</div><div class="ref-text">El público adulto responde bien al acceso al proceso creativo. Mostrar cómo se hace la salchicha, pero con elegancia.</div></div>
+<div class="ref-card"><div class="ref-name">CASO E — FEAT ESTRATÉGICO</div><div class="ref-sub">Colaboración lateral como catapulta</div><div class="ref-text">Un feat con un artista de audiencia consolidada puede abrir una puerta que hoy está cerrada. Elegirlo con precisión quirúrgica.</div></div>
+</div>
+<div class="links-block"><div class="links-label">Links útiles</div><div class="links-container" data-module="referencias"></div><button class="add-link" onclick="openModal('referencias')">+ Agregar link</button></div>
+</div></div>
+
+</div></div></div>
+
+<div class="modal-bg" id="modal"><div class="modal">
+<h3>AGREGAR LINK</h3>
+<input type="text" id="lName" placeholder="Nombre (ej: Spotify for Artists)">
+<input type="text" id="lUrl" placeholder="URL (ej: https://...)">
+<div class="modal-btns">
+<button class="btn-no" onclick="closeModal()">Cancelar</button>
+<button class="btn-ok" onclick="saveLink()">Guardar</button>
+</div></div></div>
+
+<div class="footer">
+<div style="max-width:700px;margin:0 auto;text-align:left;">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:16px;text-align:center;color:var(--text);">SOBRE ESTE PROYECTO</div>
+<div style="font-size:12px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">
+<strong style="color:var(--text);">Qué es:</strong> Dashboard estratégico para gestión de artistas musicales. Diseñado como herramienta interna de trabajo para consultoras de artistas — organiza diagnóstico, métricas, estrategia de contenidos, plan de lanzamiento, asesoría sonora y referencias en un solo lugar navegable.
+</div>
+<div style="font-size:12px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">
+<strong style="color:var(--text);">Lógica:</strong> La información de una consultoría musical suele quedar dispersa entre PDFs, presentaciones y documentos de texto. Este dashboard unifica todo en una interfaz interactiva que el artista puede consultar cuando quiera, sin depender del consultor. El sistema de solapas apiladas permite acceder a cada módulo sin perder contexto. Los links editables con persistencia local permiten que el artista vaya agregando sus propios recursos.
+</div>
+<div style="font-size:12px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">
+<strong style="color:var(--text);">Stack:</strong> HTML + CSS + JavaScript vanilla. Single-file, sin frameworks ni dependencias externas. Links editables con localStorage. Deploy estático en Vercel. Diseño responsive. La versión en producción utiliza Firebase Firestore para sincronización entre dispositivos.
+</div>
+<div style="font-size:12px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">
+<strong style="color:var(--text);">Rol:</strong> Product management, diseño de información, arquitectura del dashboard, desarrollo front-end, estrategia de contenido, deploy y entrega al cliente.
+</div>
+<div style="background:rgba(0,0,0,0.04);border-radius:10px;padding:12px 16px;font-size:11px;color:var(--text-muted);line-height:1.7;margin-top:18px;">
+⚠ <strong style="color:var(--text-light);">Nota:</strong> Toda la información presentada en este dashboard es ficticia. Los nombres, métricas, estrategias y datos fueron creados exclusivamente para esta demostración. El dashboard original fue desarrollado para un cliente real cuya identidad y datos se preservan por confidencialidad.
+</div>
+</div>
+</div>
+
+<script>
+function toggleTab(el){const item=el.closest('.tab-item');const was=item.classList.contains('active');document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));if(!was){item.classList.add('active');setTimeout(()=>item.scrollIntoView({behavior:'smooth',block:'start'}),80)}}
+let curMod='';
+function getLinks(){try{return JSON.parse(localStorage.getItem('artist-demo-links')||'{}')}catch(e){return{}}}
+function storeLinks(d){localStorage.setItem('artist-demo-links',JSON.stringify(d))}
+function renderLinks(){const all=getLinks();document.querySelectorAll('.links-container').forEach(c=>{const m=c.dataset.module;const links=all[m]||[];c.innerHTML=links.map((l,i)=>'<div class="link-row"><span style="font-size:11px;opacity:0.4;">↗</span><a href="'+l.url+'" target="_blank" rel="noopener">'+l.name+'</a><button class="link-del" onclick="delLink(\''+m+'\','+i+')" title="Eliminar">✕</button></div>').join('')})}
+function openModal(mod){curMod=mod;document.getElementById('modal').classList.add('show');document.getElementById('lName').value='';document.getElementById('lUrl').value='';document.getElementById('lName').focus()}
+function closeModal(){document.getElementById('modal').classList.remove('show');curMod=''}
+function saveLink(){const name=document.getElementById('lName').value.trim();let url=document.getElementById('lUrl').value.trim();if(!name||!url)return;if(!url.startsWith('http'))url='https://'+url;const all=getLinks();if(!all[curMod])all[curMod]=[];all[curMod].push({name,url});storeLinks(all);renderLinks();closeModal()}
+function delLink(mod,i){const all=getLinks();if(all[mod]){all[mod].splice(i,1);storeLinks(all);renderLinks()}}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+document.getElementById('lUrl').addEventListener('keydown',function(e){if(e.key==='Enter')saveLink()});
+renderLinks();
+</script>
+</body>
+</html>

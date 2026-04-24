@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artist Strategic Plan — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0a1a;
+  --sidebar-bg: #0f0e22;
+  --panel: #13122a;
+  --panel2: #1a1835;
+  --border: rgba(160,145,255,0.12);
+  --border2: rgba(160,145,255,0.22);
+  --violet: #9b87ff;
+  --violet-d: #6c56e8;
+  --violet-l: #c4b8ff;
+  --sky: #6fc7f5;
+  --sky-l: #b8e4fc;
+  --rose: #f07098;
+  --gold: #f0c96a;
+  --silver-c: #9ea3bb;
+  --bronze-c: #d49060;
+  --white: #f4f2ff;
+  --dim: rgba(200,195,255,0.45);
+  --dim2: rgba(200,195,255,0.25);
+  --sel-glow: 0 0 0 1.5px var(--violet), 0 0 20px rgba(155,135,255,0.2);
+  --sel-bronze: 0 0 0 1.5px var(--bronze-c), 0 0 16px rgba(212,144,96,0.2);
+  --sel-silver: 0 0 0 1.5px var(--silver-c), 0 0 16px rgba(158,163,187,0.2);
+  --sel-gold: 0 0 0 1.5px var(--gold), 0 0 16px rgba(240,201,106,0.2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--sidebar-bg);
+  border-right: 0.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.logo {
+  padding: 0 22px 28px;
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 20px;
+}
+.logo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-style: italic;
+  letter-spacing: .04em;
+  background: linear-gradient(135deg, var(--violet-l), var(--sky));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-sub {
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--dim2);
+  margin-top: 3px;
+}
+
+.nav-section {
+  padding: 0 14px;
+  margin-bottom: 24px;
+}
+.nav-label {
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--dim2);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--dim);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  text-decoration: none;
+}
+.nav-item:hover { background: rgba(155,135,255,0.08); color: var(--white); }
+.nav-item.active { background: rgba(155,135,255,0.15); color: var(--violet-l); }
+.nav-icon { width: 16px; height: 16px; opacity: .7; flex-shrink: 0; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 22px 0;
+  border-top: 0.5px solid var(--border);
+}
+.sidebar-badge {
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--dim2);
+}
+.sidebar-badge span {
+  color: var(--violet);
+}
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOPBAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  backdrop-filter: blur(12px);
+}
+.topbar-left { font-size: 13px; color: var(--dim); }
+.topbar-left strong { color: var(--white); font-weight: 500; }
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.confidential-badge {
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--violet);
+  border: 0.5px solid rgba(155,135,255,0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.topbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--violet-d), var(--sky));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+}
+
+/* ── CONTENT ── */
+.content { padding: 28px 32px; flex: 1; }
+
+/* HERO BANNER */
+.hero-banner {
+  border-radius: 16px;
+  background: linear-gradient(120deg, #3b2fa0 0%, #1e1a5e 40%, #0e1a3d 70%, #0a1f3a 100%);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  min-height: 130px;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: 120px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(111,199,245,0.25) 0%, transparent 70%);
+}
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: 30%;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(155,135,255,0.2) 0%, transparent 70%);
+}
+.hero-text { position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--sky-l);
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: .03em;
+  line-height: 1.1;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.hero-title em { color: var(--sky); font-style: italic; }
+.hero-tagline {
+  font-size: 13px;
+  color: rgba(200,195,255,0.6);
+  font-style: italic;
+}
+.hero-right { position: relative; z-index: 1; text-align: right; }
+.hero-stat-label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim2); margin-bottom: 4px; }
+.hero-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--sky-l);
+}
+.hero-stat-sub { font-size: 11px; color: var(--dim2); margin-top: 2px; }
+
+/* TWO-COL LAYOUT */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* SECTION TITLES */
+.section-label {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--violet);
+  margin-bottom: 14px;
+}
+
+/* ── CALCULATOR ── */
+.calc-card {
+  background: var(--panel);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.calc-header { margin-bottom: 20px; }
+.calc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+.calc-subtitle { font-size: 12px; color: var(--dim); }
+
+.cgroup { margin-bottom: 20px; }
+.cgroup-label {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--dim2);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+/* OPTION GRID */
+.ogrid { display: grid; gap: 8px; }
+.ogrid.c2 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.ogrid.c3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.ogrid.c4 { grid-template-columns: repeat(4,minmax(0,1fr)); }
+
+.ocard {
+  background: rgba(255,255,255,0.03);
+  border: 0.5px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 13px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.ocard:hover { background: rgba(155,135,255,0.07); border-color: rgba(155,135,255,0.3); }
+.ocard.sel { box-shadow: var(--sel-glow); border-color: var(--violet); background: rgba(155,135,255,0.1); }
+.ocard.sel-bronze { box-shadow: var(--sel-bronze); border-color: var(--bronze-c); background: rgba(212,144,96,0.08); }
+.ocard.sel-silver { box-shadow: var(--sel-silver); border-color: var(--silver-c); background: rgba(158,163,187,0.08); }
+.ocard.sel-gold { box-shadow: var(--sel-gold); border-color: var(--gold); background: rgba(240,201,106,0.08); }
+
+.ocheck {
+  position: absolute;
+  top: 9px; right: 9px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.ocard.sel .ocheck { background: var(--violet); border-color: var(--violet); }
+.ocard.sel-bronze .ocheck { background: var(--bronze-c); border-color: var(--bronze-c); }
+.ocard.sel-silver .ocheck { background: var(--silver-c); border-color: var(--silver-c); }
+.ocard.sel-gold .ocheck { background: var(--gold); border-color: var(--gold); }
+.ocheck svg { display: none; }
+.ocard.sel .ocheck svg, .ocard.sel-bronze .ocheck svg,
+.ocard.sel-silver .ocheck svg, .ocard.sel-gold .ocheck svg { display: block; }
+
+.obadge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  letter-spacing: .04em;
+}
+.b-bronze { background: rgba(212,144,96,0.15); color: var(--bronze-c); }
+.b-silver { background: rgba(158,163,187,0.15); color: var(--silver-c); }
+.b-gold { background: rgba(240,201,106,0.15); color: var(--gold); }
+.b-link { background: rgba(155,135,255,0.15); color: var(--violet-l); }
+
+.oname { font-size: 12px; font-weight: 500; color: var(--white); margin-bottom: 2px; padding-right: 18px; }
+.odetail { font-size: 10px; color: var(--dim); line-height: 1.4; }
+.oprice { font-size: 13px; font-weight: 500; color: var(--violet-l); margin-top: 6px; }
+.oprice.bp { color: var(--bronze-c); }
+.oprice.sp { color: var(--silver-c); }
+.oprice.gp { color: var(--gold); }
+.ofeats { margin-top: 5px; }
+.ofeat {
+  font-size: 10px;
+  color: var(--dim);
+  line-height: 1.5;
+  padding-left: 10px;
+  position: relative;
+}
+.ofeat::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 5px;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--violet);
+}
+
+/* ── LIVE TOTAL ── */
+.live-total {
+  background: linear-gradient(135deg, #1e1660 0%, #140f40 60%, #0d1530 100%);
+  border: 0.5px solid rgba(155,135,255,0.25);
+  border-radius: 16px;
+  padding: 20px 22px;
+  position: sticky;
+  top: 78px;
+}
+.live-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--sky);
+  box-shadow: 0 0 8px var(--sky);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+.live-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--violet-l); }
+
+.live-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.live-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.ll { font-size: 11px; color: var(--dim); flex-shrink: 0; }
+.lv { font-size: 11px; font-weight: 500; color: var(--white); text-align: right; }
+.lv.empty { color: var(--dim2); font-style: italic; }
+
+.live-div {
+  height: 0.5px;
+  background: rgba(155,135,255,0.15);
+  margin: 12px 0;
+}
+
+.live-grand-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim2); margin-bottom: 6px; }
+.live-grand-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 400;
+  color: var(--sky-l);
+  line-height: 1;
+}
+
+/* PILARES */
+.pilares {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.pilar {
+  background: var(--panel);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+  transition: border-color .15s;
+}
+.pilar:hover { border-color: rgba(155,135,255,0.3); }
+.pdot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pname { font-size: 11px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+.pdesc { font-size: 10px; color: var(--dim); line-height: 1.3; }
+
+/* CRONOGRAMA */
+.months {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.mcard {
+  background: var(--panel);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.mhead { padding: 16px 18px 12px; border-bottom: 0.5px solid var(--border); }
+.mnum { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+.m1 .mnum, .m2 .mnum { color: var(--violet-l); }
+.m3 .mnum { color: var(--sky); }
+.mtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+.msub { font-size: 10px; color: var(--dim); }
+.mweeks { padding: 14px 18px; flex: 1; }
+.week { margin-bottom: 12px; }
+.week:last-child { margin-bottom: 0; }
+.wtag { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--violet); margin-bottom: 2px; }
+.wfocus { font-size: 12px; font-weight: 500; color: var(--white); margin-bottom: 4px; }
+.wtask {
+  font-size: 11px;
+  color: var(--dim);
+  padding-left: 10px;
+  position: relative;
+  line-height: 1.5;
+}
+.wtask::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--sky);
+}
+.mbud {
+  padding: 12px 18px;
+  border-top: 0.5px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+.bhead { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim2); margin-bottom: 7px; }
+.brow { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+.brow .bl { color: var(--dim); }
+.brow .ba { font-weight: 500; color: var(--violet-l); }
+
+/* REFERENCIAS */
+.rgrid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 20px; }
+.rcard {
+  background: var(--panel);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.rlabel { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim2); margin-bottom: 6px; }
+.rtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+.rdetail { font-size: 11px; color: var(--dim); margin-bottom: 10px; line-height: 1.5; }
+.tagsrow { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 0.5px solid var(--border2);
+  color: var(--dim);
+}
+.tag.c { border-color: rgba(111,199,245,0.25); color: var(--sky-l); background: rgba(111,199,245,0.07); }
+
+/* COMPOSITORES */
+.cgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+.ccard {
+  background: var(--panel);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.chead {
+  padding: 12px 14px 10px;
+  border-bottom: 0.5px solid var(--border);
+  background: linear-gradient(135deg, rgba(155,135,255,0.05), transparent);
+}
+.crole { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim2); margin-bottom: 3px; }
+.cname {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--white);
+}
+.csub { font-size: 10px; color: var(--dim); margin-top: 1px; }
+.cbody { padding: 10px 14px 12px; }
+.cwlabel { font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--violet); margin-bottom: 4px; }
+.cwork { font-size: 11px; color: var(--dim); margin-bottom: 2px; }
+.clink {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--sky);
+  border: 0.5px solid rgba(111,199,245,0.25);
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.clink:hover { background: rgba(111,199,245,0.08); }
+
+/* DRIVE */
+.drive-bar {
+  background: linear-gradient(120deg, #1a1050 0%, #0d1535 100%);
+  border: 0.5px solid rgba(111,199,245,0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.dlabel { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--sky); margin-bottom: 4px; }
+.dtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.dsub { font-size: 11px; color: var(--dim); }
+.dbtn {
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border-radius: 8px;
+  background: rgba(111,199,245,0.1);
+  border: 0.5px solid rgba(111,199,245,0.3);
+  color: var(--sky-l);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background .15s;
+}
+.dbtn:hover { background: rgba(111,199,245,0.18); }
+
+/* CHALLENGE */
+.chal-bar {
+  background: linear-gradient(120deg, #1a1050 0%, #0e1230 100%);
+  border: 0.5px solid rgba(155,135,255,0.2);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.chalicon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(155,135,255,0.1);
+  border: 0.5px solid rgba(155,135,255,0.25);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.challabel { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--violet-l); margin-bottom: 4px; }
+.chaltext { font-size: 12px; color: var(--dim); line-height: 1.6; }
+.chaltext strong { color: var(--white); font-weight: 500; }
+.chaltagline {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--violet-l);
+  margin-top: 5px;
+}
+
+/* REFS VISUALES */
+.ref-visual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.ref-visual-card {
+  background: linear-gradient(135deg, #1a1560, #0d1535);
+  border: 0.5px solid rgba(155,135,255,0.2);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  transition: border-color .15s;
+}
+.ref-visual-card:hover { border-color: rgba(111,199,245,0.4); }
+.ref-play {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(111,199,245,0.1);
+  border: 0.5px solid rgba(111,199,245,0.25);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.ref-eyebrow { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--sky); margin-bottom: 3px; }
+.ref-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--white);
+}
+.ref-url { font-size: 10px; color: var(--dim2); margin-top: 2px; }
+
+/* NOTE */
+.note { font-size: 10px; color: var(--dim2); font-style: italic; margin-top: 6px; }
+
+/* FOOTER */
+.footer {
+  padding: 16px 32px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fbrand {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--dim2);
+}
+.finfo { font-size: 10px; color: var(--dim2); letter-spacing: .06em; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(155,135,255,0.2); border-radius: 2px; }
+
+/* ── RESPONSIVE MOBILE ── */
+@media (max-width: 900px) {
+  /* Cronograma: de 3 columnas a 1 columna */
+  .months {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body { flex-direction: column; }
+
+  /* SIDEBAR → barra horizontal */
+  .sidebar {
+    width: 100%;
+    min-width: unset;
+    height: auto;
+    position: relative;
+    top: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 10px 12px;
+    border-right: none;
+    border-bottom: 0.5px solid var(--border);
+    align-items: center;
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .logo {
+    padding: 0 12px 0 0;
+    border-bottom: none;
+    margin-bottom: 0;
+    border-right: 0.5px solid var(--border);
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .logo-name { font-size: 18px; }
+  .logo-sub { display: none; }
+  .nav-section {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    padding: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  .nav-label { display: none; }
+  .nav-item {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sidebar-footer { display: none; }
+
+  /* MAIN */
+  .main { overflow-y: visible; min-height: 0; }
+
+  /* TOPBAR */
+  .topbar {
+    padding: 10px 14px;
+    position: relative;
+    top: auto;
+  }
+  .topbar-left { font-size: 11px; }
+  .confidential-badge { display: none; }
+
+  /* CONTENT */
+  .content { padding: 14px; }
+
+  /* HERO */
+  .hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px;
+    min-height: auto;
+  }
+  .hero-title { font-size: 26px; }
+  .hero-right { text-align: left; }
+
+  /* PILARES */
+  .pilares { gap: 6px; flex-wrap: wrap; }
+  .pilar { min-width: 70px; }
+
+  /* TWO-COL → una columna */
+  .two-col { grid-template-columns: 1fr; }
+
+  /* CALCULADORA */
+  .calc-card { padding: 14px; }
+  .cgroup { margin-bottom: 18px; }
+  .ogrid.c3 { grid-template-columns: 1fr 1fr; }
+  .ogrid.c4 { grid-template-columns: 1fr 1fr; }
+  .ogrid.c2 { grid-template-columns: 1fr; }
+
+  /* CRONOGRAMA → una columna por mes, semanas en columna */
+  .months { grid-template-columns: 1fr; gap: 12px; }
+  .mcard { border-radius: 12px; }
+  .mhead { padding: 14px 14px 10px; }
+  .mtitle { font-size: 15px; }
+  .mweeks { padding: 10px 14px; }
+  .week { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 0.5px solid var(--border); }
+  .week:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .wtag { font-size: 9px; margin-bottom: 4px; }
+  .wfocus { font-size: 13px; margin-bottom: 8px; }
+  .wtask { font-size: 12px; padding: 4px 0 4px 10px; }
+  .mbud { padding: 10px 14px; }
+  .brow { font-size: 12px; padding: 6px 0; }
+
+  /* REFS */
+  .ref-visual-grid { grid-template-columns: 1fr; }
+
+  /* LIVE TOTAL */
+  .live-total { position: relative; top: auto; }
+  .live-grand-num { font-size: 28px; }
+}
+
+@media (max-width: 420px) {
+  .ogrid.c3, .ogrid.c4 { grid-template-columns: 1fr; }
+  .hero-title { font-size: 22px; }
+  .hero-stat-num { font-size: 22px; }
+  .ocard { padding: 12px; }
+  .oname { font-size: 13px; }
+  .oprice { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-name">VALENTINA</div>
+    <div class="logo-sub">Plan estratégico · 3 meses</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Plan</div>
+    <a href="#calc" class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/></svg>
+      Calculadora
+    </a>
+    <a href="#cronograma" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 2v2M11 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2 7h12" stroke="currentColor" stroke-width="1.2"/></svg>
+      Cronograma
+    </a>
+    <a href="#refs" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5l3.5-.5z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+      Referencias
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Equipo</div>
+    <a href="#compositores" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-2.2 1.8-4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="11" cy="9" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M8.5 14c0-1.4.9-2.5 2.5-2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Compositores
+    </a>
+    <a href="#demo-link" target="_blank" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 12.5L6.5 6.5 8.5 10l2-3.5 2.5 6H3z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+      Drive · demos
+    </a>
+    <a href="#demo-link" target="_blank" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v2H3zM3 7h10v2H3zM3 11h6v2H3z" fill="currentColor" opacity=".7"/></svg>
+      VALENTINA · PDFs
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-badge">Artist Consulting<br><span>Demo · Portfolio</span></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">Dashboard <strong>/ Plan estratégico · 2026</strong></div>
+    <div class="topbar-right">
+      <div class="confidential-badge" style="background:rgba(155,135,255,0.1);color:var(--violet-l);">Demo</div>
+      <div class="topbar-avatar">VA</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="hero-banner">
+      <div class="hero-text">
+        <div class="hero-eyebrow">Artist Consulting · 2026</div>
+        <div class="hero-title">VALE<em>NTINA</em></div>
+
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat-label">Seguidores</div>
+        <div class="hero-stat-num">61K</div>
+        <div class="hero-stat-sub">@valentina.music · Instagram</div>
+      </div>
+    </div>
+
+    <!-- PILARES -->
+    <div class="section-label">Pilares del universo Valentina</div>
+    <div class="pilares" style="margin-bottom:28px;">
+      <div class="pilar"><div class="pdot" style="background:rgba(155,135,255,0.15)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.4 2.9 3.2.47-2.3 2.24.54 3.17L7 8.82l-2.84 1.48.54-3.17L2.4 4.87l3.2-.47z" fill="#9b87ff"/></svg></div><div class="pname">Aspiracional</div><div class="pdesc">Un paso adelante</div></div>
+      <div class="pilar"><div class="pdot" style="background:rgba(111,199,245,0.12)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="#6fc7f5" stroke-width="1.2"/><path d="M7 4v3l2 1.5" stroke="#6fc7f5" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="pname">Energética</div><div class="pdesc">Movimiento y actitud</div></div>
+      <div class="pilar"><div class="pdot" style="background:rgba(240,112,152,0.12)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11.5C7 11.5 2 8.5 2 5.5a2.5 2.5 0 015 0 2.5 2.5 0 015 0c0 3-5 6-5 6z" fill="#f07098" opacity=".7"/></svg></div><div class="pname">Auténtica</div><div class="pdesc">Vulnerabilidad real</div></div>
+      <div class="pilar"><div class="pdot" style="background:rgba(240,201,106,0.12)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="#f0c96a" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="pname">Luminosa</div><div class="pdesc">Glow up constante</div></div>
+      <div class="pilar"><div class="pdot" style="background:rgba(196,184,255,0.1)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="5" width="8" height="6" rx="1" stroke="#c4b8ff" stroke-width="1.2"/><path d="M5 5V4a2 2 0 014 0v1" stroke="#c4b8ff" stroke-width="1.2"/></svg></div><div class="pname">Accesible</div><div class="pdesc">Glamour cercano</div></div>
+    </div>
+
+    <!-- CALCULATOR + LIVE TOTAL -->
+    <div id="calc" class="two-col">
+
+      <!-- LEFT: CALC -->
+      <div>
+        <div class="section-label">Calculadora de inversión</div>
+        <div class="calc-card">
+          <div class="calc-header">
+            <div class="calc-title">Armá tu presupuesto</div>
+            <div class="calc-subtitle">Seleccioná una opción por grupo · el total se actualiza en tiempo real</div>
+          </div>
+
+          <!-- CONTENIDO AUDIOVISUAL -->
+          <div class="cgroup">
+            <div class="cgroup-label">Contenido audiovisual · <strong style="color:var(--violet-l);">Visual Studio Co.</strong> · Director, DF, equipos, editor, colorista, viáticos</div>
+            <div class="ogrid c3">
+              <div class="ocard" data-group="cont_videos" data-value="1200" data-label="2 videos · $1.200">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">2 videoclips</div>
+                <div class="odetail">$600 c/u · Mes 1 y Mes 2</div>
+                <div class="oprice">$1.200</div>
+              </div>
+              <div class="ocard" data-group="cont_reels" data-value="850" data-label="25 Reels · $850">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">25 Reels nueva estética</div>
+                <div class="odetail">$850 · duran los 3 meses</div>
+                <div class="oprice">$850</div>
+              </div>
+              <div class="ocard sel" data-group="cont_combo" data-value="2050" data-label="Pack completo · $2.050">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Pack completo</div>
+                <div class="odetail">2 videos ($1.200) + 25 reels ($850)</div>
+                <div class="oprice">$2.050 total</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRODUCTOR MES 1 -->
+          <div class="cgroup">
+            <div class="cgroup-label">Productor nueva etapa · Mes 1</div>
+            <div class="ogrid c3">
+              <div class="ocard" data-group="prod1" data-value="1500" data-label="After · $1.500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="obadge b-link"><a href="https://www.youtube.com/watch?v=8jAqFolV0DU&list=RD8jAqFolV0DU&start_radio=1" target="_blank" style="color:inherit;text-decoration:none;">Tema de Luz ↗</a></div>
+                <div class="oname">After</div>
+                <div class="odetail">Produce y compone · tema de Luz íntegro</div>
+                <div class="oprice">$1.500</div>
+              </div>
+              <div class="ocard" data-group="prod1" data-value="2000" data-label="Productor Alpha · $2.000">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Productor Alpha</div>
+                <div class="odetail">Estudio profesional</div>
+                <div class="oprice">$2.000</div>
+              </div>
+              <div class="ocard" data-group="prod1" data-value="1200" data-label="Productor Beta · $1.200">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Productor Beta</div>
+                <div class="odetail">Opción más accesible</div>
+                <div class="oprice">$1.200</div>
+              </div>
+              <div class="ocard" data-group="prod1" data-value="2500" data-label="Productor Gamma · $2.500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Productor Gamma</div>
+                <div class="odetail">Producción premium</div>
+                <div class="oprice">$2.500</div>
+              </div>
+              <div class="ocard" data-group="prod1" data-value="1500" data-label="Combo compo + produ · $1.500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Combo compo + produ</div>
+                <div class="odetail">Compositor A + Compositor B</div>
+                <div class="oprice">$1.500</div>
+              </div>
+              <div class="ocard" data-group="prod1" data-value="0" data-label="Sin productor mes 1">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Sin productor mes 1</div>
+                <div class="odetail">Solo sesiones de composición</div>
+                <div class="oprice" style="color:var(--dim);">$0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRODUCTOR MES 2 -->
+          <div class="cgroup">
+            <div class="cgroup-label">Productor nueva etapa · Mes 2 (puede ser distinto)</div>
+            <div class="ogrid c3">
+              <div class="ocard" data-group="prod2" data-value="1500" data-label="After · $1.500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="obadge b-link"><a href="https://www.youtube.com/watch?v=8jAqFolV0DU" target="_blank" style="color:inherit;text-decoration:none;">Tema de Luz ↗</a></div>
+                <div class="oname">After</div>
+                <div class="odetail">Produce y compone · tema de Luz</div>
+                <div class="oprice">$1.500</div>
+              </div>
+              <div class="ocard" data-group="prod2" data-value="2000" data-label="Productor Alpha · $2.000">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Productor Alpha</div>
+                <div class="odetail">Estudio profesional</div>
+                <div class="oprice">$2.000</div>
+              </div>
+              <div class="ocard" data-group="prod2" data-value="1200" data-label="Productor Beta · $1.200">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Productor Beta</div>
+                <div class="odetail">Opción más accesible</div>
+                <div class="oprice">$1.200</div>
+              </div>
+              <div class="ocard" data-group="prod2" data-value="2500" data-label="Productor Gamma · $2.500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Productor Gamma</div>
+                <div class="odetail">Producción premium</div>
+                <div class="oprice">$2.500</div>
+              </div>
+              <div class="ocard" data-group="prod2" data-value="1500" data-label="Combo compo + produ · $1.500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Combo compo + produ</div>
+                <div class="odetail">Compositor A + Compositor B</div>
+                <div class="oprice">$1.500</div>
+              </div>
+              <div class="ocard" data-group="prod2" data-value="0" data-label="Sin productor mes 2">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Sin productor mes 2</div>
+                <div class="odetail">Solo sesiones de composición</div>
+                <div class="oprice" style="color:var(--dim);">$0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPOSITOR -->
+          <div class="cgroup">
+            <div class="cgroup-label">Compositores · Opciones disponibles · $100 c/u · $200 mensual</div>
+            <div class="ogrid c4">
+              <div class="ocard" data-group="compositor" data-value="500" data-label="Compositor Premium · $500">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Compositor Premium</div>
+                <div class="odetail">Compositora top-tier · $500 fee fijo</div>
+                <div class="oprice">$500 / sesión</div>
+              </div>
+              <div class="ocard" data-group="compositor" data-value="100" data-label="Compositor A · $100/mes">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Compositor A</div>
+                <div class="odetail">$100 / mes</div>
+                <div class="oprice">$100 / mes</div>
+              </div>
+              <div class="ocard" data-group="compositor" data-value="100" data-label="Compositor B · $100/mes">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Compositor B</div>
+                <div class="odetail">$100 / mes</div>
+                <div class="oprice">$100 / mes</div>
+              </div>
+              <div class="ocard" data-group="compositor" data-value="0" data-label="Sin compositor aún">
+                <div class="ocheck"><svg width="7" height="5" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="oname">Sin compositor aún</div>
+                <div class="odetail">Definir más adelante</div>
+                <div class="oprice" style="color:var(--dim);">$0</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /calc-card -->
+      </div><!-- /left -->
+
+      <!-- RIGHT: LIVE TOTAL -->
+      <div>
+        <div class="section-label">Resumen en vivo</div>
+        <div class="live-total">
+          <div class="live-header">
+            <div class="live-dot"></div>
+            <div class="live-title">Inversión seleccionada</div>
+          </div>
+          <div class="live-rows">
+            <div class="live-row"><span class="ll">Contenido Visual Studio Co.</span><span class="lv" id="lv-cont">Pack completo · $2.050</span></div>
+            
+            <div class="live-row"><span class="ll">Productor mes 1</span><span class="lv empty" id="lv-prod1">— elegir</span></div>
+            <div class="live-row"><span class="ll">Productor mes 2</span><span class="lv empty" id="lv-prod2">— elegir</span></div>
+            <div class="live-row"><span class="ll">Compositor · 1 sesión</span><span class="lv empty" id="lv-comp">— elegir</span></div>
+          </div>
+          <div class="live-div"></div>
+          <div class="live-grand-label">Total estimado</div>
+          <div class="live-grand-num" id="lv-total">$2.050</div>
+        </div>
+
+        <!-- REFS VISUALES en sidebar derecho -->
+        <div style="margin-top:20px;">
+          <div class="section-label">Refs estéticas · reels</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="#demo-link" target="_blank" class="ref-visual-card">
+              <div class="ref-play"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polygon points="4,2 10,6 4,10" fill="#6fc7f5"/></svg></div>
+              <div>
+                <div class="ref-eyebrow">Referencia 1</div>
+                <div class="ref-name">Reel estética ↗</div>
+                <div class="ref-url">ref-link (demo)</div>
+              </div>
+            </a>
+            <a href="#demo-link" target="_blank" class="ref-visual-card">
+              <div class="ref-play"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polygon points="4,2 10,6 4,10" fill="#6fc7f5"/></svg></div>
+              <div>
+                <div class="ref-eyebrow">Referencia 2</div>
+                <div class="ref-name">Reel estética ↗</div>
+                <div class="ref-url">ref-link (demo)</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div><!-- /right -->
+    </div><!-- /two-col -->
+
+    <!-- CRONOGRAMA -->
+    <div id="cronograma" style="margin-top:32px;">
+      <div class="section-label">Cronograma semanal · 3 meses</div>
+      <div class="months">
+
+        <div class="mcard m1">
+          <div class="mhead">
+            <div class="mnum">Mes 1 · Semanas 1–4</div>
+            <div class="mtitle">Tema 1 — cierre de etapa</div>
+            <div class="msub">Pre-roll · estudio nueva era · lanzamiento S3 · reels</div>
+          </div>
+          <div class="mweeks">
+            <div class="week">
+              <div class="wtag">Semana 1 — Pre-roll + estudio</div>
+              <div class="wfocus">Arranque doble: cierre viejo + nueva era</div>
+              <div class="wtask">Pre-roll Tema 1 en Instagram (tono de cierre)</div>
+              <div class="wtask">Pre-save Spotify activado</div>
+              <div class="wtask">Primera sesión de estudio nueva etapa</div>
+              <div class="wtask">Primera sesión con compositor elegido</div>
+              <div class="wtask">Subir reels 1–6 de Visual Studio Co.</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 2 — Preparación + estudio</div>
+              <div class="wfocus">Assets listos + sesiones en curso</div>
+              <div class="wtask">Preparar assets visuales del lanzamiento</div>
+              <div class="wtask">Pitch playlists editoriales Spotify</div>
+              <div class="wtask">Sesiones estudio y composición (2–3x semana)</div>
+              <div class="wtask">Subir reels 7–14 Visual Studio Co.</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 3 — Lanzamiento</div>
+              <div class="wfocus">Tema 1 live · challenge activo</div>
+              <div class="wtask">Lanzamiento Tema 1 en todas las plataformas</div>
+                            <div class="wtask">Activar challenge fácil de replicar</div>
+              <div class="wtask">Subir reels 15–20 · teasers y outnow activos</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 4 — Posicionamiento</div>
+              <div class="wfocus">Sostener · métricas · nueva era avanza</div>
+              <div class="wtask">Amplificar challenge que más traccionó</div>
+              <div class="wtask">Subir reels 21–25 · sostener circulación</div>
+              <div class="wtask">Revisar primeras métricas</div>
+              <div class="wtask">Preparar assets Tema 2</div>
+            </div>
+          </div>
+          <div class="mbud">
+            <div class="bhead">Presupuesto mes 1</div>
+            <div class="brow"><span class="bl">Videoclip + teaser + outnow · Visual Studio Co.</span><span class="ba">incluido en pack</span></div>
+            
+            <div class="brow"><span class="bl">Productor nueva etapa</span><span class="ba" id="bpr1">— elegir</span></div>
+            <div class="brow"><span class="bl">Compositor · sesión</span><span class="ba" id="bpc1">— elegir</span></div>
+          </div>
+        </div>
+
+        <div class="mcard m2">
+          <div class="mhead">
+            <div class="mnum">Mes 2 · Semanas 5–8</div>
+            <div class="mtitle">Tema 2 + nueva era</div>
+            <div class="msub">Pre-roll · videoclip · lanzamiento S7 · challenge</div>
+          </div>
+          <div class="mweeks">
+            <div class="week">
+              <div class="wtag">Semana 5 — Pre-roll Tema 2</div>
+              <div class="wfocus">Mantener momentum + pre-roll</div>
+              <div class="wtask">Pre-roll Tema 2 en Instagram</div>
+              <div class="wtask">Pre-save Spotify nuevo tema</div>
+              <div class="wtask">Sesiones de estudio nueva era</div>
+              <div class="wtask">Subir reels 1–6 Visual Studio Co. (Tema 2)</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 6 — Video + assets</div>
+              <div class="wfocus">Filmación + preparación</div>
+              <div class="wtask">Filmación videoclip Tema 2</div>
+              <div class="wtask">Preparar assets visuales</div>
+              <div class="wtask">Sesiones estudio y composición</div>
+              <div class="wtask">Subir reels 7–14 Visual Studio Co.</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 7 — Lanzamiento</div>
+              <div class="wfocus">Tema 2 live · challenge · reels</div>
+              <div class="wtask">Lanzamiento Tema 2 en todas las plataformas</div>
+                            <div class="wtask">Activar challenge Tema 2</div>
+              <div class="wtask">Subir reels 15–20</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 8 — Cierre + señal nueva era</div>
+              <div class="wfocus">Métricas · primera imagen nueva era</div>
+              <div class="wtask">Amplificar challenge que más traccionó</div>
+              <div class="wtask">Subir reels 21–25</div>
+              <div class="wtask">Publicar primera señal nueva estética</div>
+              <div class="wtask">Tema nuevo en producción avanzada</div>
+            </div>
+          </div>
+          <div class="mbud">
+            <div class="bhead">Presupuesto mes 2</div>
+            <div class="brow"><span class="bl">Videoclip + teaser + outnow · Visual Studio Co.</span><span class="ba">incluido en pack</span></div>
+            
+            <div class="brow"><span class="bl">Productor nueva etapa</span><span class="ba" id="bpr2">— elegir</span></div>
+            <div class="brow"><span class="bl">Sesiones composición</span><span class="ba">$200–$500</span></div>
+          </div>
+        </div>
+
+        <div class="mcard m3">
+          <div class="mhead">
+            <div class="mnum">Mes 3 · Semanas 9–12</div>
+            <div class="mtitle">Primer tema nueva era</div>
+            <div class="msub">Estudio · pre-roll · lanzamiento S11 · 25 reels nueva estética</div>
+          </div>
+          <div class="mweeks">
+            <div class="week">
+              <div class="wtag">Semana 9 — Estudio + pre-roll</div>
+              <div class="wfocus">Tema nuevo en recta final</div>
+              <div class="wtask">Sesiones finales de grabación y mezcla</div>
+              <div class="wtask">Pre-roll nueva era en Instagram</div>
+              <div class="wtask">Pre-save Spotify nuevo tema</div>
+              <div class="wtask">Subir reels 1–6 Visual Studio Co. (nueva estética)</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 10 — Video + reels</div>
+              <div class="wfocus">Filmación video + assets</div>
+              <div class="wtask">Filmación videoclip nueva era</div>
+              <div class="wtask">Preparar assets del lanzamiento</div>
+              <div class="wtask">Subir reels 7–14 nueva estética</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 11 — Lanzamiento</div>
+              <div class="wfocus">Nuevo tema live · challenge</div>
+              <div class="wtask">Lanzamiento primer tema nueva era</div>
+                            <div class="wtask">Challenge nueva era</div>
+              <div class="wtask">Subir reels 15–20</div>
+            </div>
+            <div class="week">
+              <div class="wtag">Semana 12 — Posicionamiento</div>
+              <div class="wfocus">Sostener · métricas · plan mes 4</div>
+              <div class="wtask">Amplificar challenge ganador</div>
+              <div class="wtask">Subir reels 21–25</div>
+              <div class="wtask">Revisar métricas lanzamiento nueva era</div>
+              <div class="wtask">Armar plan de continuidad mes 4</div>
+            </div>
+          </div>
+          <div class="mbud">
+            <div class="bhead">Presupuesto mes 3</div>
+            <div class="brow"><span class="bl">25 reels nueva estética · Visual Studio Co.</span><span class="ba">incluido en pack</span></div>
+            <div class="brow"><span class="bl">Productor elegido</span><span class="ba" id="bpr3">— elegir en calculadora</span></div>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DRIVE -->
+    <a href="#demo-link" target="_blank" style="text-decoration:none;">
+      <div class="drive-bar">
+        <div>
+          <div class="dlabel">Material de referencia · demos y canciones</div>
+          <div class="dtitle">Carpeta de compositores</div>
+          <div class="dsub">Canciones y demos para evaluar dirección sonora y química con Valentina.</div>
+        </div>
+        <div class="dbtn">Abrir Drive ↗</div>
+      </div>
+    </a>
+
+    <!-- CHALLENGE -->
+    <div class="chal-bar">
+      <div class="chalicon">
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M11 2l2.09 4.26L18 7.27l-3.5 3.41.83 4.82L11 13.27l-4.33 2.27.83-4.82L4 7.27l4.91-.71z" stroke="#9b87ff" stroke-width="1.2" fill="none"/></svg>
+      </div>
+      <div>
+        <div class="challabel">Concepto de challenge</div>
+        <div class="chaltext"><strong>Diseñar un challenge fácil de replicar por mujeres 18–30</strong>, alineado al universo de evolución y glow up de Valentina. Que entre por el hook del challenge, no por la obra en sí.</div>
+        <div class="chaltagline">"Siente todo. Brillá igual."</div>
+      </div>
+    </div>
+
+    <!-- REFERENCIAS -->
+    <div id="refs">
+      <div class="section-label">Referencias artísticas · universo Valentina</div>
+      <div class="rgrid">
+        <div class="rcard">
+          <div class="rlabel">Artista de referencia A</div>
+          <div class="rtitle">No vayas a atender cuando el demonio llama</div>
+          <div class="rdetail">2025 · Producción: Productor de referencia · Composición: Compositor Premium, equipo creativo</div>
+          <div class="tagsrow"><span class="tag">Pop rock</span><span class="tag">Identidad sonora fuerte</span><span class="tag">Universo audiovisual cohesivo</span></div>
+        </div>
+        <div class="rcard">
+          <div class="rlabel">Ángela Torres</div>
+          <div class="rtitle">No me olvides</div>
+          <div class="rdetail">2025 · Producción: Fermín Ugarte · 11 canciones · Debut solista · Telonera Shakira en Vélez</div>
+          <div class="tagsrow"><span class="tag c">Pop · electrónica · balada</span><span class="tag c">Favorita = referencia directa</span><span class="tag c">Entre nos (100%)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPOSITORES -->
+    <div id="compositores">
+      <div class="section-label">Equipo de compositores · opciones</div>
+      <div class="cgrid">
+        <div class="ccard">
+          <div class="chead">
+            <div class="crole">Compositora · artista</div>
+            <div class="cname">Compositor Premium</div>
+            <div class="csub">Canta y compone · 34K seguidores</div>
+          </div>
+          <div class="cbody">
+            <div class="cwlabel">Destacado</div>
+            <div class="cwork">· $500 fijo por sesión · salga o no el tema</div>
+            <div class="cwork">· No vayas a atender cuando el demonio llama</div>
+            <a href="#demo-link" target="_blank" class="clink">@ref.creative1 ↗</a>
+          </div>
+        </div>
+        <div class="ccard">
+          <div class="chead">
+            <div class="crole">Compositor · artista</div>
+            <div class="cname">Compositor A</div>
+            <div class="csub">Pop · canciones propias y para artistas</div>
+          </div>
+          <div class="cbody">
+            <div class="cwlabel">Destacado</div>
+            <div class="cwork">· Mil Dudas · Vulnerable · Reset</div>
+            <div class="cwork">· After · Suelta · Flores de Colores</div>
+            <a href="#demo-link" target="_blank" class="clink">@ref.creative2 ↗</a>
+          </div>
+        </div>
+        <div class="ccard">
+          <div class="chead">
+            <div class="crole">Compositor · UMPG Argentina</div>
+            <div class="cname">Compositor B</div>
+            <div class="csub">Artista y compositor · 184K seguidores</div>
+          </div>
+          <div class="cbody">
+            <div class="cwlabel">Destacado</div>
+            <div class="cwork">· Turnito de Terapia</div>
+            <div class="cwork">· Firmado con UMPG Argentina</div>
+            <a href="#demo-link" target="_blank" class="clink">@ref.creative3 ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="footer" style="padding:40px 30px;">
+    <div style="max-width:700px; margin:0 auto; text-align:left;">
+      <div style="font-family:'Playfair Display',serif; font-size:20px; color:var(--white); margin-bottom:16px;">Sobre este proyecto</div>
+      <div style="font-size:12px; color:var(--dim); line-height:1.8; margin-bottom:12px;">
+        <strong style="color:var(--white);">Qué es:</strong> Plan estratégico de 3 meses para artistas musicales pop. Incluye calculadora de presupuesto interactiva con planes Bronze/Silver/Gold para media buying y producción, scheduling semanal por mes, referencias visuales y artísticas, y sección de compositores/productores con comparación de opciones.
+      </div>
+      <div style="font-size:12px; color:var(--dim); line-height:1.8; margin-bottom:12px;">
+        <strong style="color:var(--white);">Lógica:</strong> La planificación de un lanzamiento musical suele manejarse con tablas de Excel y cadenas de emails. Este dashboard unifica presupuesto, calendario editorial y referencias en una interfaz interactiva donde el artista y su equipo pueden tomar decisiones en tiempo real — seleccionando planes de inversión y viendo el impacto inmediato en el presupuesto total.
+      </div>
+      <div style="font-size:12px; color:var(--dim); line-height:1.8; margin-bottom:12px;">
+        <strong style="color:var(--white);">Stack:</strong> HTML + CSS + JavaScript vanilla. Single-file. Diseño dark theme con sidebar sticky. Calculadora de presupuesto con lógica de selección exclusiva por grupo y total acumulativo en tiempo real. Responsive con breakpoints para mobile. Deploy en Vercel.
+      </div>
+      <div style="font-size:12px; color:var(--dim); line-height:1.8; margin-bottom:12px;">
+        <strong style="color:var(--white);">Rol:</strong> Product management, diseño de UX/UI, desarrollo front-end, diseño del sistema de calculadora interactiva, estrategia de contenido musical, planificación del calendario editorial, deploy y entrega al equipo de consultoría.
+      </div>
+      <div style="background:rgba(155,135,255,0.08); border-radius:10px; padding:12px 16px; font-size:11px; color:var(--dim); line-height:1.7; margin-top:16px;">
+        ⚠ <strong style="color:var(--white);">Nota:</strong> Toda la información es ficticia. Nombres, métricas, presupuestos y referencias fueron creados para esta demostración. El dashboard original fue desarrollado para un cliente real cuya identidad se preserva por confidencialidad.
+      </div>
+    </div>
+  </div>
+</div><!-- /main -->
+
+<script>
+const S = { cont_m1m2: 0, cont_m3: 0, cont_combo: 2050, prod1: 0, prod2: 0, compositor: 0 };
+const L = { cont_m1m2: null, cont_m3: null, cont_combo: 'Pack completo · $2.050', prod1: null, prod2: null, compositor: null };
+
+function fmt(n) { return '$' + n.toLocaleString('es-AR'); }
+
+function contenidoTotal() {
+  if (S.cont_combo > 0) return S.cont_combo;
+  return S.cont_m1m2 + S.cont_m3;
+}
+
+function update() {
+  const total = contenidoTotal() + S.prod1 + S.prod2 + S.compositor;
+
+  const contEl = document.getElementById('lv-cont');
+  const ct = contenidoTotal();
+  if (ct) {
+    contEl.textContent = L.cont_combo || ((L.cont_m1m2 || '') + (L.cont_m1m2 && L.cont_m3 ? ' + ' : '') + (L.cont_m3 || ''));
+    contEl.className = 'lv';
+  } else { contEl.textContent = '— elegir contenido'; contEl.className = 'lv empty'; }
+
+
+  const p1El = document.getElementById('lv-prod1');
+  if (S.prod1) { p1El.textContent = L.prod1; p1El.className = 'lv'; }
+  else { p1El.textContent = '— elegir'; p1El.className = 'lv empty'; }
+
+  const p2El = document.getElementById('lv-prod2');
+  if (S.prod2) { p2El.textContent = L.prod2; p2El.className = 'lv'; }
+  else { p2El.textContent = '— elegir'; p2El.className = 'lv empty'; }
+
+  const cEl = document.getElementById('lv-comp');
+  if (S.compositor) { cEl.textContent = L.compositor; cEl.className = 'lv'; }
+  else { cEl.textContent = '— elegir compositor'; cEl.className = 'lv empty'; }
+
+  document.getElementById('lv-total').textContent = fmt(total);
+
+
+  const bpr1 = document.getElementById('bpr1'); if (bpr1) bpr1.textContent = L.prod1 || '— elegir';
+  const bpr2 = document.getElementById('bpr2'); if (bpr2) bpr2.textContent = L.prod2 || '— elegir';
+  const bpr3 = document.getElementById('bpr3'); if (bpr3) bpr3.textContent = (L.prod1 || L.prod2) ? (L.prod1 || L.prod2) : '— elegir en calculadora';
+  const bpc1 = document.getElementById('bpc1'); if (bpc1) bpc1.textContent = L.compositor || '— elegir';
+}
+
+document.querySelectorAll('.ocard').forEach(card => {
+  card.addEventListener('click', function(e) {
+    if (e.target.tagName === 'A') return;
+    const group = this.dataset.group;
+    const val = parseInt(this.dataset.value) || 0;
+    const tier = this.dataset.tier;
+    const label = this.dataset.label || '';
+
+    if (group === 'cont_combo') {
+      document.querySelectorAll('.ocard[data-group="cont_m1m2"]').forEach(c => c.classList.remove('sel','sel-bronze','sel-silver','sel-gold'));
+      document.querySelectorAll('.ocard[data-group="cont_m3"]').forEach(c => c.classList.remove('sel','sel-bronze','sel-silver','sel-gold'));
+      S.cont_m1m2 = 0; L.cont_m1m2 = null;
+      S.cont_m3 = 0; L.cont_m3 = null;
+    } else if (group === 'cont_m1m2' || group === 'cont_m3') {
+      document.querySelectorAll('.ocard[data-group="cont_combo"]').forEach(c => c.classList.remove('sel','sel-bronze','sel-silver','sel-gold'));
+      S.cont_combo = 0; L.cont_combo = null;
+    }
+
+    document.querySelectorAll(`.ocard[data-group="${group}"]`).forEach(c => {
+      c.classList.remove('sel','sel-bronze','sel-silver','sel-gold');
+    });
+
+    if (tier === 'bronze') this.classList.add('sel-bronze');
+    else if (tier === 'silver') this.classList.add('sel-silver');
+    else if (tier === 'gold') this.classList.add('sel-gold');
+    else this.classList.add('sel');
+
+    S[group] = val;
+    L[group] = label;
+    update();
+  });
+});
+
+// Nav active state
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
