@@ -16,7 +16,6 @@ Cada proyecto tuvo un objetivo claro: ordenar información compleja, facilitar l
 |----------|------|----------|
 | [dashboard-lanzamiento-musical](./dashboard-lanzamiento-musical/) | Lanzamiento de álbum | XIX Consultoría |
 | [dashboard-estrategia-artista](./dashboard-estrategia-artista/) | Plan estratégico de artista | XIX Consultoría |
-| [dashboard-produccion-fashion-show](./dashboard-produccion-fashion-show/) | Producción de desfile | Freelance |
 | [dashboard-gestion-clientes](./dashboard-gestion-clientes/) | Gestión de clientes | Freelance |
 
 ## Stack
