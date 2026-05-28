@@ -12,11 +12,12 @@ Cada proyecto tuvo un objetivo claro: ordenar información compleja, facilitar l
 
 ## Proyectos incluidos
 
-| Proyecto | Tipo | Contexto |
-|----------|------|----------|
-| [dashboard-lanzamiento-musical](./dashboard-lanzamiento-musical/) | Lanzamiento de álbum | XIX Consultoría |
-| [dashboard-estrategia-artista](./dashboard-estrategia-artista/) | Plan estratégico de artista | XIX Consultoría |
-| [dashboard-gestion-clientes](./dashboard-gestion-clientes/) | Gestión de clientes | Freelance |
+| Proyecto | Tipo | Contexto | Demo |
+|----------|------|----------|------|
+| [dashboard-lanzamiento-musical](./dashboard-lanzamiento-musical/) | Lanzamiento de álbum | XIX Consultoría | [Ver demo](https://emilsebergamin-cloud.github.io/porfolio-dashboards/dashboard-lanzamiento-musical/) |
+| [dashboard-estrategia-artista](./dashboard-estrategia-artista/) | Plan estratégico de artista | XIX Consultoría | [Ver demo](https://emilsebergamin-cloud.github.io/porfolio-dashboards/dashboard-estrategia-artista/) |
+| [dashboard-produccion-fashion-show](./dashboard-produccion-fashion-show/) | Producción de desfile | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/porfolio-dashboards/dashboard-produccion-fashion-show/) |
+| [dashboard-gestion-clientes](./dashboard-gestion-clientes/) | Gestión de clientes | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/porfolio-dashboards/dashboard-gestion-clientes/) |
 
 ## Stack
 
