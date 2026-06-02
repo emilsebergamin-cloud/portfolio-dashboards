@@ -16,7 +16,7 @@ Cada proyecto tuvo un objetivo claro: ordenar información compleja, facilitar l
 |----------|------|----------|------|
 | [dashboard-lanzamiento-musical](./dashboard-lanzamiento-musical/) | Lanzamiento de álbum | XIX Consultoría | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-lanzamiento-musical/) |
 | [dashboard-estrategia-artista](./dashboard-estrategia-artista/) | Plan estratégico de artista | XIX Consultoría | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-estrategia-artista/) |
-| [aurea-nyc-dashboard](https://github.com/emilsebergamin-cloud/aurea-nyc-dashboard) | Producción de desfile · NYC | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/aurea-nyc-dashboard/) |
+| [dashboard-produccion-fashion-show](./dashboard-produccion-fashion-show/) | Producción de desfile | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-produccion-fashion-show/) |
 | [dashboard-gestion-clientes](./dashboard-gestion-clientes/) | Gestión de clientes | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-gestion-clientes/) |
 
 ## Stack
