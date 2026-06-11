@@ -1,6 +1,6 @@
 # Dashboard — Gestión de redes sociales - Contenido
 
-Dashboard construido para una profesional independiente del área de bienestar que trabaja con clientes de forma individual. Pensado como espacio de gestión del día a día: agenda, clientes activos, seguimiento de sesiones, moodboard y notas.
+Dashboard construido para una profesional independiente del área de bienestar que trabaja con clientes de forma individual. Pensado como espacio de gestión del día a día: estratégia de contenido, ideas, moodboard y notas, etc
 
 ## Contexto
 
