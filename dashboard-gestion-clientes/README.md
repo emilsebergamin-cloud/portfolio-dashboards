@@ -1,34 +1,40 @@
-# Dashboard — Gestión de redes sociales - Contenido
+# Dashboard — Gestión de contenido (v2)
 
-Dashboard construido para una profesional independiente del área de bienestar que trabaja con clientes de forma individual. Pensado como espacio de gestión del día a día: estratégia de contenido, ideas, moodboard y notas, etc
+Dashboard de gestión de contenido para Instagram, construido para una profesional independiente del área del bienestar. Es el espacio donde planifica su estrategia mensual, organiza stories y carruseles por semana, registra ideas y frases, lleva un calendario de publicaciones y arma su moodboard de marca.
+
+Esta es la **versión 2**: una reescritura completa de la herramienta original (que era un único archivo HTML) en una app moderna de React, manteniendo toda la funcionalidad pero con una arquitectura más sólida y una experiencia más fluida.
 
 ## Contexto
 
-Proyecto **freelance**. La versión publicada acá es una demo **anonimizada** — el nombre de la profesional, los datos de sus clientes, los registros de sesiones y los contactos fueron reemplazados por datos ficticios para proteger la privacidad del proyecto original.
+Proyecto **freelance**. La versión publicada acá es una demo **anonimizada** — el nombre de la profesional, su marca y todos los contenidos fueron reemplazados por datos ficticios para proteger la privacidad del proyecto original.
 
-## Problema que resolvía
+## Secciones
 
-Profesionales independientes (coaches, terapeutas, consultoras) suelen gestionar su práctica entre agendas de papel, chats, Google Calendar y planillas sueltas. La información fragmentada hace que pierdan contexto entre sesiones, olviden detalles del cliente, o no vean patrones en su propia práctica.
-
-El dashboard consolida agenda, fichas de clientes, historial de sesiones y espacio creativo (moodboard con quotes rotativos) en un solo lugar. La idea: que abrir el dashboard a la mañana sea suficiente para saber cómo va el día.
+- **Inicio** — saludo por hora del día, frase rotativa, métricas rápidas (posts del mes, borradores, stories de la semana, ideas en proceso), próxima publicación y foco semanal.
+- **Estrategia** — plan temático del mes, stories organizadas por semana y día, banco de encuestas y carruseles.
+- **Contenido** — biblioteca de publicaciones con filtros por categoría, formato y estado.
+- **Ideas** — frases, reflexiones, referencias visuales, temas futuros y un pipeline kanban.
+- **Calendario** — vista mensual de publicaciones y stories.
+- **Moodboard** — paleta de marca y referencias visuales.
 
 ## Decisiones de diseño
 
-- **Paleta suave con rosa, verde y beige**: acompaña el mundo del bienestar sin caer en cliché.
-- **Moodboard con quotes rotativos**: aporta un momento de pausa cuando la profesional abre el dashboard.
-- **Greeting por hora del día**: pequeño detalle que humaniza la herramienta.
-- **Kanban para gestión de clientes**: visualización más intuitiva que una lista para ver el estado de cada relación.
-- **Firebase Firestore para persistencia**: permite actualizar información desde múltiples dispositivos sincronizada.
+- **Paleta suave de rosa, verde y beige** y tipografías serif + sans para acompañar el mundo del bienestar.
+- **Greeting por hora del día** y frase rotativa: pequeños detalles que humanizan la herramienta.
+- **Organización por semanas** (S1–S4): refleja cómo la clienta piensa su contenido mes a mes.
+- **Edición optimista**: los cambios se ven al instante.
 
 ## Stack
 
-- HTML + CSS + JavaScript vanilla, un solo archivo.
-- Firebase Firestore para persistencia en tiempo real.
-- html2pdf.js para exportar fichas a PDF.
+- **React** (Vite) + **React Router** para la navegación entre secciones.
+- **Tailwind CSS** para los estilos y **Framer Motion** para las transiciones.
+- En el proyecto real: **Firebase Firestore** y **Storage** para persistencia y sync en tiempo real.
 
-## Cómo verlo
+## Sobre esta demo
 
-Abrir `index.html` en cualquier navegador. Esta versión demo usa datos ficticios embebidos.
+Esta build es estática y **no se conecta a ningún backend**: arranca con datos ficticios y guarda los cambios en el `localStorage` del navegador, así cada visitante tiene su propia copia editable. No expone datos ni credenciales del proyecto real.
+
+El acceso real está protegido con un PIN privado. Para que se pueda explorar, en la demo el PIN es público: **`1234`** (también se muestra en la pantalla de ingreso).
 
 ---
 

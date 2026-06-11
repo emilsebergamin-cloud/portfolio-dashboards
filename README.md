@@ -16,12 +16,13 @@ Cada proyecto tuvo un objetivo claro: ordenar información compleja, facilitar l
 |----------|------|----------|------|
 | [dashboard-lanzamiento-musical](./dashboard-lanzamiento-musical/) | Lanzamiento de álbum | XIX Consultoría | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-lanzamiento-musical/) |
 | [dashboard-estrategia-artista](./dashboard-estrategia-artista/) | Plan estratégico de artista | XIX Consultoría | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-estrategia-artista/) |
-| [dashboard-produccion-fashion-show](./dashboard-produccion-fashion-show/) | Producción de desfile | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-produccion-fashion-show/) |
-| [dashboard-gestion- redes sociales ](./dashboard-gestion-clientes/) | Gestión de clientes | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-gestion-clientes/) |
+| [dashboard-gestion-contenido](./dashboard-gestion-clientes/) | Gestión de contenido (v2) | Freelance | [Ver demo](https://emilsebergamin-cloud.github.io/portfolio-dashboards/dashboard-gestion-clientes/) |
 
 ## Stack
 
-Todos los dashboards están construidos como **single-file HTML** con CSS y JS embebidos. Algunos incorporan Firebase para persistencia en tiempo real, otros usan `localStorage` para edición local. La decisión de mantenerlos como archivo único fue deliberada: hace que sean portables, fáciles de deployar, y simples de mantener para clientes no técnicos.
+La mayoría de los dashboards están construidos como **single-file HTML** con CSS y JS embebidos. Algunos incorporan Firebase para persistencia en tiempo real, otros usan `localStorage` para edición local. La decisión de mantenerlos como archivo único fue deliberada: hace que sean portables, fáciles de deployar, y simples de mantener para clientes no técnicos.
+
+El más reciente ([gestión de contenido v2](./dashboard-gestion-clientes/)) es una reescritura en **React + Vite + Tailwind**, publicada como build estática: muestra el salto de una herramienta de archivo único a una app con arquitectura de componentes.
 
 ## Autoría
 
